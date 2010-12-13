@@ -10,16 +10,17 @@ var Express   = require('express'),
 require.paths.unshift(docroot + '/modules');
 
 var AppLoader = require('apploader'),
-    server    = Express.createServer(),
-    loader    = new AppLoader(server, docroot);
+    server    = Express.createServer();
+    
+server.use(Express.staticProvider(docroot + '/public'));
+server.use(Express.logger({ format: ':date | :remote-addr | :method | :url | :status | :response-time' }));
+server.use(Express.bodyDecoder());
+server.use(Express.methodOverride());
+server.use(Express.cookieDecoder());
+server.use(Express.session());
 
+var loader    = new AppLoader(server, docroot);
 loader.on('done', function() {
-    server.use(Express.staticProvider(docroot + '/public'));
-    server.use(Express.logger({ format: ':method :url :status' }));
-    server.use(Express.bodyDecoder());
-    server.use(Express.methodOverride());
-    server.use(Express.cookieDecoder());
-    server.use(Express.session());
     server.set('views', docroot + '/views');
     server.set('view engine', 'html');
     server.register('.html', require('ejs'));
