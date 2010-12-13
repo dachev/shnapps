@@ -46,7 +46,7 @@ function Probe(startTerm, endTerm, cb) {
                 window   = JsDom.jsdom(body).createWindow(),
                 document = window.document;
             
-            profiler.log('parsing');
+            //profiler.log('parsing');
             
             // jquery breaks without this
             location  = window.location;
@@ -55,7 +55,7 @@ function Probe(startTerm, endTerm, cb) {
             $    = require('jquery').create(window);
             $doc = $(document);
             
-            profiler.log();
+            //profiler.log();
             
             if (isDisambiguationPage($doc)) {
                 cb({
@@ -67,7 +67,7 @@ function Probe(startTerm, endTerm, cb) {
                 return;
             }
             
-            profiler.log();
+            //profiler.log();
             
             var $h1      = $('#firstHeading'),
                 title    = $h1.text(),
@@ -77,7 +77,7 @@ function Probe(startTerm, endTerm, cb) {
                 $link    = $links.eq(0),
                 linkUrl  = $link.attr('href');
             
-            profiler.log('selectors');
+            //profiler.log('selectors');
             
             // done
             if (currentUrl.href.toLowerCase() == endUrl.href.toLowerCase()) {
@@ -93,7 +93,7 @@ function Probe(startTerm, endTerm, cb) {
                 return;
             }
             
-            profiler.log();
+            //profiler.log();
             
             if (!linkUrl) {
                 cb({
@@ -108,7 +108,7 @@ function Probe(startTerm, endTerm, cb) {
             var absUrl  = Url.resolve(currentUrl, linkUrl),
                 nextUrl = Url.parse(absUrl);
             
-            profiler.log();
+            //profiler.log();
             
             if (isWikipediaUrl(nextUrl) == false) {
                 cb({
@@ -133,8 +133,8 @@ function Probe(startTerm, endTerm, cb) {
                 return;
             }
             
-            profiler.log();
-            profiler.finalize();
+            //profiler.log();
+            //profiler.finalize();
             
             var item = {url:currentUrl, title:title, $links:$links};
             stack.push(item);
