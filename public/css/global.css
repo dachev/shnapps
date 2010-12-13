@@ -1,0 +1,17 @@
+@font-face {
+    font-family:'Quartz';
+    font-style:normal;
+    font-weight:normal;
+    src:url("/rtclock/css/quartz_regular.ttf") format('truetype');
+}
+
+#credits {
+    display:none;
+}
+
+.gritter-item a,
+.gritter-item a:active,
+.gritter-item a:visited {
+    color:#00C8FF;
+    text-decoration:none;
+}

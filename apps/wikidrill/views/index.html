@@ -1,0 +1,26 @@
+<p id="credits">
+    <a href="http://www.deleket.com/softscraps.html">icons</a>, 
+    <a href="http://www.webdesignerwall.com/demo/css-buttons.html">buttons</a>, 
+    <a href="http://infrequently.org/2009/08/css-3-progress/">xul.css</a>
+</p>
+<div class="hbox center page">
+    <div class="vbox top">
+        <form id="form" class="box form" action="/wikidrill" action="POST">
+            <div class="hbox end line">
+                <label class="label" for="start_term">http://en.wikipedia.org/wiki/</label>
+                <input id="start_term" class="text invalid" name="start_term" title="start page" placeholder="start page" autocomplete="on" />
+            </div>
+            <div class="hbox end line">
+                <label class="label" for="end_term">http://en.wikipedia.org/wiki/</label>
+                <input id="end_term" class="text invalid" name="end_term" title="end page" placeholder="end page" autocomplete="on" />
+            </div>
+            <div class="hbox end line">
+                <input type="submit" class="button black submit" value="Start" />
+            </div>
+        </form>
+        <div id="status" class="vbox center box status inactive">
+            <p class="message"></p>
+        </div>
+        <ol id="result" class="box result"></ol>
+    </div>
+</div>
