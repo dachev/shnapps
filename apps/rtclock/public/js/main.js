@@ -12,7 +12,7 @@ $(function() {
     }
     
     function initRemoteClock() {
-        var socket = new io.Socket(null, {port: 1976, rememberTransport: false});
+        var socket = new io.Socket(null, {port:8000, rememberTransport: false});
         socket.connect();
     
         socket.on('connect', function()    {
