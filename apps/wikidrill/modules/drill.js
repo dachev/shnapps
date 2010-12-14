@@ -1,9 +1,8 @@
 var Rest   = require('restler-aaronblohowiak'),
     JsDom  = require('jsdom'),
-    Url    = require('url'),
-    EE     = require('events').EventEmitter;
+    Url    = require('url');
 
-Probe.prototype = new EE();
+Probe.prototype = new process.EventEmitter();
 Probe.prototype.constructor = Probe;
 function Probe(startTerm, endTerm, cb) {
     var baseUrl  = 'http://en.wikipedia.org/wiki/',

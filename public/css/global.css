@@ -15,3 +15,29 @@
     color:#00C8FF;
     text-decoration:none;
 }
+
+.gritter-item .about {
+    margin: 0 0 10px 0;
+}
+
+.gritter-item .about:last-child {
+    margin: 0;
+}
+
+.gritter-item .about .topic {
+    display:inline;
+    color:#FFF;
+    font-weight:normal;
+}
+
+.gritter-item .about .items,
+.gritter-item .about .items .item {
+    display:inline;
+    margin:0;
+    padding:0;
+    list-style:none;
+}
+
+.gritter-item .about .item span {
+    color:#999;
+}

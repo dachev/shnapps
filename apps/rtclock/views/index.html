@@ -1,11 +1,19 @@
 <div id="credits">
-    <% var topics = Object.keys(about); topics.forEach(function(el1, idx1) { %>
-        <p>
-            <span class="topic"><%= el1 %></span>:
-            <% var items = Object.keys(about[el1]); items.forEach(function(el2, idx2) { %>
-                <a href="<%= about[el1][el2] %>"><%= el2 %></a><% if (idx2 < items.length-1) { %>, <% } %>
-            <% }); %>
-        </p>
+    <% about.forEach(function(topic, idx1) { %>
+        <div class="about">
+            <h3 class="topic"><%= topic.name %></h3>:
+            <ul class="items">
+                <% topic.items.forEach(function(item, idx2) { %>
+                    <li class="item">
+                        <% if (item.link) { %>
+                            <a href="<%= item.link %>"><%= item.name %></a><% if (idx2 < topic.items.length-1) { %>, <% } %>
+                        <% } else { %>
+                            <span><%= item.name %></span><% if (idx2 < topic.items.length-1) { %>, <% } %>
+                        <% } %>
+                    </li>
+                <% }); %>
+            </ul>
+        </div>
     <% }); %>
 </div>
 <div class="hbox center wrapper">

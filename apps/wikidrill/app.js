@@ -1,14 +1,24 @@
-var about = {
-    require: {
-        'express' : 'https://github.com/visionmedia/express'
+var about = [{
+        name  : 'require',
+        items : [
+            {name:'express', link:'https://github.com/visionmedia/express'},
+            {name:'ejs',     link:'https://github.com/visionmedia/ejs'},
+            {name:'jsdom',   link:'https://github.com/tmpvar/jsdom'},
+            {name:'jquery',  link:null},
+            {name:'restler-aaronblohowiak', link:'https://github.com/aaronblohowiak/restler'}
+            
+        ]
     },
-    credits: {
-        'icons'   : 'http://www.deleket.com/softscraps.html',
-        'buttons' : 'http://www.webdesignerwall.com/demo/css-buttons.html',
-        'bubbles' : 'http://boedesign.com/blog/2009/07/11/growl-for-jquery-gritter/',
-        'xul.css' : 'http://infrequently.org/2009/08/css-3-progress/'
+    {
+        name  : 'credits',
+        items : [
+            {name:'icons',   link:'http://www.deleket.com/softscraps.html'},
+            {name:'buttons', link:'http://www.webdesignerwall.com/demo/css-buttons.html'},
+            {name:'bubbles', link:'http://boedesign.com/blog/2009/07/11/growl-for-jquery-gritter/'},
+            {name:'xul.css', link:'http://infrequently.org/2009/08/css-3-progress/'}
+        ]
     }
-};
+];
 
 var Express = require('express'),
     Drill   = require('drill'),

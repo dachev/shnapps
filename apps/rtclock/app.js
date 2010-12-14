@@ -1,15 +1,22 @@
-var about = {
-    require: {
-        'express' : 'https://github.com/visionmedia/express'
+var about = [{
+        name  : 'require',
+        items : [
+            {name:'express',   link:'https://github.com/visionmedia/express'},
+            {name:'ejs',       link:'https://github.com/visionmedia/ejs'},
+            {name:'socket.io', link:'https://github.com/LearnBoost/Socket.IO-node'}
+        ]
     },
-    credits: {
-        'fonts'   : 'http://www.font-zone.com/download.php?fid=1520',
-        'clock'   : 'http://blog.briancavalier.com/css3-digital-clock',
-        'icons'   : 'http://www.deleket.com/softscraps.html',
-        'bubbles' : 'http://boedesign.com/blog/2009/07/11/growl-for-jquery-gritter/',
-        'xul.css' : 'http://infrequently.org/2009/08/css-3-progress/'
+    {
+        name  : 'credits',
+        items : [
+            {name:'fonts',   link:'http://www.font-zone.com/download.php?fid=1520'},
+            {name:'clock',   link:'http://blog.briancavalier.com/css3-digital-clock'},
+            {name:'icons',   link:'http://www.deleket.com/softscraps.html'},
+            {name:'bubbles', link:'http://boedesign.com/blog/2009/07/11/growl-for-jquery-gritter/'},
+            {name:'xul.css', link:'http://infrequently.org/2009/08/css-3-progress/'}
+        ]
     }
-};
+];
 
 var Express   = require('express'),
     AppSocket = require('appsocket'),
