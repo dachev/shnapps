@@ -1,3 +1,15 @@
+var about = {
+    require: {
+        'express' : 'https://github.com/visionmedia/express'
+    },
+    credits: {
+        'icons'   : 'http://www.deleket.com/softscraps.html',
+        'buttons' : 'http://www.webdesignerwall.com/demo/css-buttons.html',
+        'bubbles' : 'http://boedesign.com/blog/2009/07/11/growl-for-jquery-gritter/',
+        'xul.css' : 'http://infrequently.org/2009/08/css-3-progress/'
+    }
+};
+
 var Express = require('express'),
     Drill   = require('drill'),
     app     = Express.createServer();
@@ -11,7 +23,7 @@ app.set('view engine', 'html');
 app.get('/wikidrill', function(req, res, next) {
     res.render('index', {
         status:200,
-        locals:{request: req}
+        locals:{about:about}
     });
 });
 

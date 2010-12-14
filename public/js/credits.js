@@ -16,7 +16,7 @@ $(function() {
         });
         
         $.gritter.add({
-            title  : 'Credits',
+            title  : 'About',
             text   : $credits.html(),
             image  : '/images/button_info_01.png',
             sticky : true

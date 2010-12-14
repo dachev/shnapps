@@ -1,3 +1,16 @@
+var about = {
+    require: {
+        'express' : 'https://github.com/visionmedia/express'
+    },
+    credits: {
+        'fonts'   : 'http://www.font-zone.com/download.php?fid=1520',
+        'clock'   : 'http://blog.briancavalier.com/css3-digital-clock',
+        'icons'   : 'http://www.deleket.com/softscraps.html',
+        'bubbles' : 'http://boedesign.com/blog/2009/07/11/growl-for-jquery-gritter/',
+        'xul.css' : 'http://infrequently.org/2009/08/css-3-progress/'
+    }
+};
+
 var Express   = require('express'),
     AppSocket = require('appsocket'),
     rest      = Express.createServer();
@@ -9,7 +22,7 @@ rest.set('view engine', 'html');
 rest.get('/rtclock', function(req, res, next) {
     res.render('index', {
         status:200,
-        locals:{request: req}
+        locals:{about:about}
     });
 });
 

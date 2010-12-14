@@ -85,6 +85,7 @@ $(function() {
                 value  = $this.val();
         
             if (value == '') {
+                $this.addClass('invalid');
                 invalidCount++;
             }
             else {

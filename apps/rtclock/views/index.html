@@ -1,9 +1,13 @@
-<p id="credits">
-    <a href="http://www.font-zone.com/download.php?fid=1520">fonts</a>, 
-    <a href="http://blog.briancavalier.com/css3-digital-clock">clock</a>, 
-    <a href="http://www.deleket.com/softscraps.html">icons</a>, 
-    <a href="http://infrequently.org/2009/08/css-3-progress/">xul.css</a>
-</p>
+<div id="credits">
+    <% var topics = Object.keys(about); topics.forEach(function(el1, idx1) { %>
+        <p>
+            <span class="topic"><%= el1 %></span>:
+            <% var items = Object.keys(about[el1]); items.forEach(function(el2, idx2) { %>
+                <a href="<%= about[el1][el2] %>"><%= el2 %></a><% if (idx2 < items.length-1) { %>, <% } %>
+            <% }); %>
+        </p>
+    <% }); %>
+</div>
 <div class="hbox center wrapper">
     <div class="vbox center">
         <div class="hbox center row">
