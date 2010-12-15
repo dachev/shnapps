@@ -1,7 +1,7 @@
 $(function() {
-    var $credits = $('#credits');
+    var $about = $('#about');
     
-    function initCredits() {
+    function initAbout() {
         if (typeof $.gritter != 'object') {
             return;
         }
@@ -10,18 +10,18 @@ $(function() {
             var $this = $(this),
                 href  = $this.attr('href');
             
-            window.open(href, 'credits');
+            window.open(href, 'about');
             
             return false;
         });
         
         $.gritter.add({
             title  : 'About',
-            text   : $credits.html(),
+            text   : $about.html(),
             image  : '/images/button_info_01.png',
             sticky : true
         });
     }
     
-    initCredits();
+    initAbout();
 });
