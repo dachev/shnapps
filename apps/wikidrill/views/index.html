@@ -1,21 +1,4 @@
-<div id="credits">
-    <% about.forEach(function(topic, idx1) { %>
-        <div class="about">
-            <h3 class="topic"><%= topic.name %></h3>:
-            <ul class="items">
-            <% topic.items.forEach(function(item, idx2) { %>
-                <li class="item">
-                    <% if (item.link) { %>
-                        <a href="<%= item.link %>"><%= item.name %></a><% if (idx2 < topic.items.length-1) { %>, <% } %>
-                    <% } else { %>
-                        <span><%= item.name %></span><% if (idx2 < topic.items.length-1) { %>, <% } %>
-                    <% } %>
-                </li>
-            <% }); %>
-            </ul>
-        </div>
-    <% }); %>
-</div>
+<%- partial(rootPath + '/views/partials/about', { locals:{about:about} }) %>
 <div class="hbox center page">
     <div class="vbox top">
         <form id="form" class="box form" action="/wikidrill" action="POST">

@@ -20,24 +20,30 @@ var about = [{
     }
 ];
 
-var Express = require('express'),
+var Path    = require('path'),
+    Express = require('express'),
+    Ejs     = require('ejs'),
     Drill   = require('drill'),
-    app     = Express.createServer();
+    rest    = Express.createServer();
 
-app.use('/wikidrill', Express.staticProvider(__dirname + '/public'));
-app.use(Express.bodyDecoder());
-app.set('views', __dirname + '/views');
-app.register('.html', require('ejs'));
-app.set('view engine', 'html');
+rest.use('/wikidrill', Express.staticProvider(__dirname + '/public'));
 
-app.get('/wikidrill', function(req, res, next) {
+// configure views
+rest.set('views', __dirname + '/views');
+rest.register('.html', Ejs);
+rest.set('view engine', 'html');
+rest.helpers({
+    rootPath: Path.join(__dirname, '../../')
+});
+
+rest.get('/wikidrill', function(req, res, next) {
     res.render('index', {
         status:200,
         locals:{about:about}
     });
 });
 
-app.post('/wikidrill', function(req, res, next) {
+rest.post('/wikidrill', function(req, res, next) {
     var result = {success:false, msgType:'error', msg:'Unknow server error'},
         args   = req.body || {};
     
@@ -69,5 +75,5 @@ function drillWikipedia(res, startTerm, endTerm) {
 }
 
 module.exports = {
-    rest:app
+    rest:rest
 };

@@ -18,14 +18,22 @@ var about = [{
     }
 ];
 
-var Express   = require('express'),
+var Path      = require('path'),
+    Express   = require('express'),
+    Ejs       = require('ejs'),
     AppSocket = require('appsocket'),
     rest      = Express.createServer();
 
 rest.use('/rtclock', Express.staticProvider(__dirname + '/public'));
+
+// configure views
 rest.set('views', __dirname + '/views');
-rest.register('.html', require('ejs'));
+rest.register('.html', Ejs);
 rest.set('view engine', 'html');
+rest.helpers({
+    rootPath: Path.join(__dirname, '../../')
+});
+
 rest.get('/rtclock', function(req, res, next) {
     res.render('index', {
         status:200,

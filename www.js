@@ -1,6 +1,7 @@
 #!/usr/bin/env node
 
 var Express   = require('express'),
+    Ejs       = require('ejs'),
     Path      = require('path'),
     argv      = require('optimist').argv,
     opts      = makeOptions(argv),
@@ -23,7 +24,7 @@ var loader    = new AppLoader(server, docroot);
 loader.on('done', function() {
     server.set('views', docroot + '/views');
     server.set('view engine', 'html');
-    server.register('.html', require('ejs'));
+    server.register('.html', Ejs);
     
     server.get('/', function(req, res, next) {
         res.render(docroot + '/views/index', {
