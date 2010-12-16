@@ -18,46 +18,64 @@ var about = [{
     }
 ];
 
-var Path      = require('path'),
-    Express   = require('express'),
-    Ejs       = require('ejs'),
-    AppSocket = require('appsocket'),
-    rest      = Express.createServer();
+module.exports = {
+    rest   : null,
+    socket : null,
+    about  : about,
+    init   : init
+};
 
-rest.use('/rtclock', Express.staticProvider(__dirname + '/public'));
-
-// configure views
-rest.set('views', __dirname + '/views');
-rest.register('.html', Ejs);
-rest.set('view engine', 'html');
-rest.helpers({
-    rootPath: Path.join(__dirname, '../../')
-});
-
-rest.get('/rtclock', function(req, res, next) {
-    res.render('index', {
-        status:200,
-        locals:{about:about}
-    });
-});
-
-var consumer = new AppSocket.Consumer();
-consumer.on('join', function(client) {
-    consumer.broadcast({
-        notification:makeMessage('join')
+function init () {
+    var Path      = require('path'),
+        Express   = require('express'),
+        Ejs       = require('ejs'),
+        AppSocket = require('appsocket'),
+        rest      = Express.createServer();
+    
+    rest.use('/rtclock', Express.staticProvider(__dirname + '/public'));
+    
+    // configure views
+    rest.set('views', __dirname + '/views');
+    rest.register('.html', Ejs);
+    rest.set('view engine', 'html');
+    rest.helpers({
+        rootPath: Path.join(__dirname, '../../')
     });
     
-    client.on('data', function(msg) {
-        //console.log(msg);
-    });
-    client.on('drop', function() {
-        consumer.broadcast({
-            notification:makeMessage('drop')
+    rest.get('/rtclock', function(req, res, next) {
+        res.render('index', {
+            status:200,
+            locals:{about:about}
         });
     });
-});
-
-function makeMessage(action) {
+    
+    var consumer = new AppSocket.Consumer();
+    consumer.on('join', function(client) {
+        consumer.broadcast({
+            notification:sendMessage(consumer, 'join')
+        });
+        
+        client.on('data', function(msg) {
+            //console.log(msg);
+        });
+        client.on('drop', function() {
+            consumer.broadcast({
+                notification:sendMessage(consumer, 'drop')
+            });
+        });
+    });
+    
+    setInterval(function() {
+        consumer.broadcast({
+            time:+new Date
+        });
+    }, 1000);
+    
+    module.exports.rest   = rest;
+    module.exports.socket = consumer;
+}
+    
+function sendMessage(consumer, action) {
     var count = Object.keys(consumer.clients).length,
         file  = 'button_add_01.png',
         title = 'User joined',
@@ -80,17 +98,6 @@ function makeMessage(action) {
         time   : '3000'
     }
 }
-
-setInterval(function() {
-    consumer.broadcast({
-        time:+new Date
-    });
-}, 1000);
-
-module.exports = {
-    rest   : rest,
-    socket : consumer
-};
 
 
 

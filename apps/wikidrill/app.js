@@ -20,45 +20,57 @@ var about = [{
     }
 ];
 
-var Path    = require('path'),
-    Express = require('express'),
-    Ejs     = require('ejs'),
-    Drill   = require('drill'),
-    rest    = Express.createServer();
+module.exports = {
+    rest   : null,
+    socket : null,
+    about  : about,
+    init   : init
+};
 
-rest.use('/wikidrill', Express.staticProvider(__dirname + '/public'));
-
-// configure views
-rest.set('views', __dirname + '/views');
-rest.register('.html', Ejs);
-rest.set('view engine', 'html');
-rest.helpers({
-    rootPath: Path.join(__dirname, '../../')
-});
-
-rest.get('/wikidrill', function(req, res, next) {
-    res.render('index', {
-        status:200,
-        locals:{about:about}
+function init() {
+    var Path    = require('path'),
+        Express = require('express'),
+        Ejs     = require('ejs'),
+        Drill   = require('drill'),
+        rest    = Express.createServer();
+    
+    rest.use('/wikidrill', Express.staticProvider(__dirname + '/public'));
+    
+    // configure views
+    rest.set('views', __dirname + '/views');
+    rest.register('.html', Ejs);
+    rest.set('view engine', 'html');
+    rest.helpers({
+        rootPath: Path.join(__dirname, '../../')
     });
-});
-
-rest.post('/wikidrill', function(req, res, next) {
-    var result = {success:false, msgType:'error', msg:'Unknow server error'},
-        args   = req.body || {};
     
-    if (!args.start_term || !args.end_term) {
-        result.msg = 'Start or end page is missing or invalid';
-        res.send(result);
-        res.end();
+    rest.get('/wikidrill', function(req, res, next) {
+        res.render('index', {
+            status:200,
+            locals:{about:about}
+        });
+    });
+    
+    rest.post('/wikidrill', function(req, res, next) {
+        var result = {success:false, msgType:'error', msg:'Unknow server error'},
+            args   = req.body || {};
         
-        return;
-    }
+        if (!args.start_term || !args.end_term) {
+            result.msg = 'Start or end page is missing or invalid';
+            res.send(result);
+            res.end();
+            
+            return;
+        }
+        
+        drillWikipedia(Drill, res, args.start_term, args.end_term);
+    });
     
-    drillWikipedia(res, args.start_term, args.end_term);
-});
+    module.exports.rest = rest;
+}
 
-function drillWikipedia(res, startTerm, endTerm) {
+    
+function drillWikipedia(Drill, res, startTerm, endTerm) {
     var result = {success:false, msgType:'error', msg:'Unknow server error'};
     
     Drill.probe(startTerm, endTerm, function(bit) {
@@ -73,7 +85,3 @@ function drillWikipedia(res, startTerm, endTerm) {
         res.end();
     });
 }
-
-module.exports = {
-    rest:rest
-};

@@ -1,6 +1,7 @@
 #!/usr/bin/env node
 
-var Express   = require('express'),
+var Fs        = require('fs'),
+    Express   = require('express'),
     Ejs       = require('ejs'),
     Path      = require('path'),
     argv      = require('optimist').argv,
@@ -10,9 +11,10 @@ var Express   = require('express'),
 
 require.paths.unshift(docroot + '/modules');
 
-var AppLoader = require('apploader'),
+var AppSocket = require('appsocket'),
+    AppLoader = require('apploader'),
     server    = Express.createServer();
-    
+
 server.use(Express.staticProvider(docroot + '/public'));
 server.use(Express.logger({ format: ':date | :remote-addr | :method | :url | :status | :response-time' }));
 server.use(Express.bodyDecoder());
@@ -20,7 +22,8 @@ server.use(Express.methodOverride());
 server.use(Express.cookieDecoder());
 server.use(Express.session());
 
-var loader    = new AppLoader(server, docroot);
+
+var loader = new AppLoader(server, docroot);
 loader.on('done', function() {
     server.set('views', docroot + '/views');
     server.set('view engine', 'html');
