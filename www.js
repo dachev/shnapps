@@ -1,16 +1,23 @@
 #!/usr/bin/env node
 
 function AppLoader(server, docroot) {
-    var self      = this,
-        apps      = loadApps(docroot + '/apps'),
-        deps      = getDeps(apps),
-        installer = new DepInstaller(deps);
-
+    var self  = this;
+    
+    console.log('loading apps');
+    
+    var apps  = loadApps(docroot + '/apps'),
+        deps  = getDeps(apps);
+    
+    console.log('installing app dependencies');
+    
+    var installer = new DepInstaller(deps);
     installer.on('done', function() {
         var AppSocket = require('appsocket'),
             producer  = new AppSocket.Producer(server);
         
+        console.log('initializing apps');
         initApps(producer, apps);
+        console.log('ready');
     });
     
     function loadApps(appDir) {
@@ -155,14 +162,14 @@ function showBanner() {
     console.log(new Array(banner.length+1).join('-'))
 }
 
+var Fs    = require('fs'),
+    Exec  = require('child_process').exec,
+    Path  = require('path'),
+    deps  = ['express', 'ejs', 'socket.io', 'optimist'];
 
+console.log('installing server dependencies');
 
-var Fs         = require('fs'),
-    Exec       = require('child_process').exec,
-    Path       = require('path'),
-    deps       = ['express', 'ejs', 'socket.io', 'optimist'],
-    installer  = new DepInstaller(deps);
-
+var installer  = new DepInstaller(deps);
 installer.on('done', function() {
     var Express   = require('express'),
         Ejs       = require('ejs'),
