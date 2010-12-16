@@ -34,8 +34,7 @@ $(function() {
     
     $doc.delegate('form', 'submit', function() {
         var $this  = $(this),
-            data   = $this.serialize(),
-            args   = $this.serializeArray(),
+            args   = makeArgs(),
             action = $this.attr('action');
         
         for (var i = 0; i < args.length; i++) {
@@ -51,7 +50,7 @@ $(function() {
         $status.removeClass('inactive done error warning success');
         $status.addClass('working').find('.message').html('');
         
-        $.post(action, data, function(response, status, xhr) {
+        $.post(action, args, function(response, status, xhr) {
             enableSubmit();
             $submit.removeClass('working');
             $status.removeClass('working').addClass('done');
@@ -77,11 +76,25 @@ $(function() {
         return false;
     });
     
+    function makeArgs() {
+        var args = {};
+        
+        $inputs.filter('[type="text"]').each(function() {
+            var $this  = $(this),
+                name   = $this.attr('name'),
+                value  = $this.val();
+            
+            args[name] = value;
+        });
+        
+        return args;
+    }
+    
     function checkFormValid() {
         var invalidCount = 0;
         
         $inputs.filter('[type="text"]').each(function() {
-            var $this  = $(this)
+            var $this  = $(this),
                 value  = $this.val();
         
             if (value == '') {
@@ -112,8 +125,6 @@ $(function() {
     }
     
     function initInputs() {
-        $inputs.filter('[type="text"]').
-            addClass('invalid').
-            val('');
+        $inputs.filter('[type="text"]');
     }
 });

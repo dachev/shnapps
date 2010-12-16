@@ -78,7 +78,7 @@ a, a:active, a:visited {
     background-color:#FF0;
 }
 
-.page .box.form input.disabled {
+.page .box.form input[type="submit"].disabled {
     opacity:0.4;
 }
 
