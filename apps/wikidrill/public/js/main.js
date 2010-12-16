@@ -86,6 +86,7 @@ $(function() {
         
             if (value == '') {
                 $this.addClass('invalid');
+                disableSubmit();
                 invalidCount++;
             }
             else {
