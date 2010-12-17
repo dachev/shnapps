@@ -138,21 +138,24 @@ a, a:active, a:visited {
 }
 
 .page .box.result li {
-    margin: 0px 0px 8px 0px;
+    margin: 0px 0px 8px 15px;
     padding: 2px 5px;
     background-color:#EEE;
-    font-size: 16px;
+    font-size: 11px;
     line-height: 28px;
     font-family: Arial;
 }
 
 .page .box.result li:last-child {
-    margin: 0px;
+    margin: 0px 0px 0px 15px;
+}
+
+.page .box.result li a {
+    font-size: 16px;
 }
 
 .page .box.result,
 .page .box.result li {
-    list-style: none;
     text-indent: 0;
 }
 
