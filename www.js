@@ -127,13 +127,13 @@ function makeOptions(argv) {
         docroot:''
     }
     
-    if (typeof argv.p != 'string') {
+    if (!argv.p) {
         showBanner();
         console.log('No port number specified')
         process.exit(1);
     }
     
-    if (typeof argv.d != 'string') {
+    if (!argv.d) {
         showBanner();
         console.log('No document root specified')
         process.exit(1);
