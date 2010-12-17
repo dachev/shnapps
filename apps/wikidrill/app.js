@@ -22,12 +22,11 @@ var about = [{
 
 module.exports = {
     rest   : null,
-    socket : null,
     about  : about,
     init   : init
 };
 
-function init() {
+function init(bayeux) {
     var Path    = require('path'),
         Express = require('express'),
         Ejs     = require('ejs'),

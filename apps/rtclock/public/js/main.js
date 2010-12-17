@@ -8,26 +8,19 @@ $(function() {
         
         setInterval(function() {
             $local.time(new Date);
-        }, 1000);
+        }, 330);
     }
     
     function initRemoteClock() {
-        var socket = new io.Socket(null, {port:8000, rememberTransport: false});
-        socket.connect();
     
-        socket.on('connect', function()    {
-            socket.send({topic:'rtclock', command:'join'});
-        
-            socket.on('message', function(msg) {
-                if (msg.time) {
-                    showRemoteTime(msg.time);
-                }
-                if (msg.notification) {
-                    showNotification(msg.notification);
-                }
-            });
-            socket.on('disconnect', function() {
-            });
+        var client = new Faye.Client(location.origin + '/faye', {
+            timeout:120
+        });
+        client.subscribe('/rtclock/time', function(msg) {
+            showRemoteTime(msg.time);
+        });
+        client.subscribe('/rtclock/users', function(msg) {
+            showNotification(msg.users);
         });
     }
     

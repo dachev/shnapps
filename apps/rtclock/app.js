@@ -1,9 +1,9 @@
 var about = [{
         name  : 'require',
         items : [
-            {name:'express',   link:'https://github.com/visionmedia/express'},
-            {name:'ejs',       link:'https://github.com/visionmedia/ejs'},
-            {name:'socket.io', link:'https://github.com/LearnBoost/Socket.IO-node'}
+            {name:'express', link:'https://github.com/visionmedia/express'},
+            {name:'ejs',     link:'https://github.com/visionmedia/ejs'},
+            {name:'faye',    link:'https://github.com/jcoglan/faye'}
         ]
     },
     {
@@ -20,17 +20,15 @@ var about = [{
 
 module.exports = {
     rest   : null,
-    socket : null,
     about  : about,
     init   : init
 };
 
-function init () {
-    var Path      = require('path'),
-        Express   = require('express'),
-        Ejs       = require('ejs'),
-        AppSocket = require('appsocket'),
-        rest      = Express.createServer();
+function init(bayeux) {
+    var Path    = require('path'),
+        Express = require('express'),
+        Ejs     = require('ejs'),
+        rest    = Express.createServer();
     
     rest.use('/rtclock', Express.staticProvider(__dirname + '/public'));
     
@@ -49,34 +47,60 @@ function init () {
         });
     });
     
-    var consumer = new AppSocket.Consumer();
-    consumer.on('join', function(client) {
-        consumer.broadcast({
-            notification:sendMessage(consumer, 'join')
-        });
-        
-        client.on('data', function(msg) {
-            //console.log(msg);
-        });
-        client.on('drop', function() {
-            consumer.broadcast({
-                notification:sendMessage(consumer, 'drop')
-            });
-        });
-    });
-    
+    var client = bayeux.getClient();
     setInterval(function() {
-        consumer.broadcast({
-            time:+new Date
-        });
+        client.publish('/rtclock/time', {time:+new Date});
     }, 1000);
     
-    module.exports.rest   = rest;
-    module.exports.socket = consumer;
+    var counter = new Counter(client);
+    bayeux.addExtension(counter);
+    
+    module.exports.rest = rest;
+}
+
+var c = 0;
+function Counter(client) {
+    var self    = this,
+        local   = client,
+        remote  = {};
+    
+    this.incoming = function(message, callback) {
+        if (message.channel == '/meta/disconnect') {
+            console.log(--c);
+            
+            var cid = message.clientId;
+            
+            if (remote[cid]) {
+                delete remote[cid];
+                local.publish('/rtclock/users', makeMessage(remote, 'drop'));
+            }
+        }
+        
+        return callback(message);
+    };
+    
+    this.outgoing = function(message, callback) {
+        if (message.channel == '/meta/subscribe') {
+            if (message.subscription == '/rtclock/users') {
+                if (message.successful == true) {
+                    console.log(++c);
+            
+                    var cid = message.clientId;
+                    remote[cid] = true;
+                    
+                    process.nextTick(function() {
+                        local.publish('/rtclock/users', makeMessage(remote, 'join'));
+                    });
+                }
+            }
+        }
+        
+        return callback(message);
+    };
 }
     
-function sendMessage(consumer, action) {
-    var count = Object.keys(consumer.clients).length,
+function makeMessage(clients, action) {
+    var count = Object.keys(clients).length,
         file  = 'button_add_01.png',
         title = 'User joined',
         text  = 'You are the only user on this page';
@@ -91,11 +115,13 @@ function sendMessage(consumer, action) {
     }
     
     return {
-        title  : title,
-        text   : text,
-        image  : '/images/' + file,
-        sticky : false,
-        time   : '3000'
+        users: {
+            title  : title,
+            text   : text,
+            image  : '/images/' + file,
+            sticky : false,
+            time   : '3000'
+        }
     }
 }
 

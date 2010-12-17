@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 
-function AppLoader(server, docroot) {
-    var self  = this;
+function AppLoader(server, bayeux, docroot) {
+    var self = this;
     
     console.log('loading apps');
     
@@ -12,11 +12,8 @@ function AppLoader(server, docroot) {
     
     var installer = new DepInstaller(deps);
     installer.on('done', function() {
-        var AppSocket = require('appsocket'),
-            producer  = new AppSocket.Producer(server);
-        
         console.log('initializing apps');
-        initApps(producer, apps);
+        initApps(bayeux, apps);
         console.log('ready');
     });
     
@@ -51,15 +48,11 @@ function AppLoader(server, docroot) {
         return apps;
     }
     
-    function initApps(producer, apps) {
+    function initApps(bayeux, apps) {
         Object.keys(apps).forEach(function(name, idx) {
             var api = apps[name].api;
             
-            api.init();
-            
-            if (api.socket) {
-                producer.addConsumer(name, api.socket);
-            }
+            api.init(bayeux);
             
             server.use(api.rest);
         });
@@ -165,7 +158,7 @@ function showBanner() {
 var Fs    = require('fs'),
     Exec  = require('child_process').exec,
     Path  = require('path'),
-    deps  = ['express', 'ejs', 'socket.io', 'optimist'];
+    deps  = ['express', 'ejs', 'faye', 'optimist'];
 
 console.log('installing server dependencies');
 
@@ -173,6 +166,7 @@ var installer  = new DepInstaller(deps);
 installer.on('done', function() {
     var Express   = require('express'),
         Ejs       = require('ejs'),
+        Faye      = require('faye'),
         argv      = require('optimist').argv,
         opts      = makeOptions(argv),
         port      = opts.port,
@@ -188,8 +182,13 @@ installer.on('done', function() {
     server.use(Express.cookieDecoder());
     server.use(Express.session());
     
+    var bayeux = new Faye.NodeAdapter({
+        mount   : '/faye',
+        timeout : 45
+    });
+    bayeux.attach(server);
     
-    var loader = new AppLoader(server, docroot);
+    var loader = new AppLoader(server, bayeux, docroot);
     loader.on('done', function() {
         server.set('views', docroot + '/views');
         server.set('view engine', 'html');
