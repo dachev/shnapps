@@ -10,7 +10,7 @@ A collection of [node.js](http://nodejs.org) apps and experiments served from a 
 
     $ git clone git://github.com/dachev/node-lab.git
 
-    $ node-lab/www.js -p 8000 -d .
+    $ node-lab/www.js -p 8000 -d node-lab
 
 ## Node Compatibility
     
