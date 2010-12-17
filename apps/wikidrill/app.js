@@ -70,15 +70,24 @@ function init(bayeux) {
 
     
 function drillWikipedia(Drill, res, startTerm, endTerm) {
-    var result = {success:false, msgType:'error', msg:'Unknow server error'};
-    
-    Drill.probe(startTerm, endTerm, function(bit) {
-        result.success = bit.success;
-        result.msgType = (bit.success == true) ? 'success' : 'error';
-        result.msg     = bit.msg;
+    var result = {success:false, msgType:'error', msg:'Unknow server error'},
+        probe  = Drill.probe(startTerm, endTerm);
+        
+    probe.on('error', function(bit) {
+        result.success = false;
+        result.msgType = 'error';
+        result.msg     = bit.msg || result.msg;
         result.stack   = bit.stack;
         
-        //console.log(result);
+        res.send(result);
+        res.end();
+    });
+        
+    probe.on('complete', function(bit) {
+        result.success = true;
+        result.msgType = 'success';
+        result.msg     = bit.msg;
+        result.stack   = bit.stack;
         
         res.send(result);
         res.end();

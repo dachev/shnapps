@@ -4,8 +4,9 @@ var Rest   = require('restler-aaronblohowiak'),
 
 Probe.prototype = new process.EventEmitter();
 Probe.prototype.constructor = Probe;
-function Probe(startTerm, endTerm, cb) {
-    var baseUrl  = 'http://en.wikipedia.org/wiki/',
+function Probe(startTerm, endTerm) {
+    var self     = this,
+        baseUrl  = 'http://en.wikipedia.org/wiki/',
         startUrl = Url.parse(baseUrl + startTerm),
         endUrl   = Url.parse(baseUrl + endTerm),
         stack    = [],
@@ -14,22 +15,23 @@ function Probe(startTerm, endTerm, cb) {
         counter  = 0,
         maxHops  = 50;
     
-    if (startTerm.toLowerCase() == endTerm.toLowerCase()) {
-        cb({
-            success:false,
-            msg:'Start and end term must be different',
-            stack:getTrace(stack)
-        });
+    // give users a chance to attach "error" handlers
+    process.nextTick(function() {
+        if (startTerm.toLowerCase() == endTerm.toLowerCase()) {
+            self.emit('error', {
+                msg:'Start and end term must be different',
+                stack:getTrace(stack)
+            });
+            
+            return;
+        }
         
-        return;
-    }
-    
-    loadPage(startUrl);
+        loadPage(startUrl);
+    });
     
     function loadPage(url) {
         if (counter >= maxHops) {
-            cb({
-                success:false,
+            self.emit('error', {
                 msg:'Maximum number of hops reached: ' + maxHops,
                 stack:getTrace(stack)
             });
@@ -57,8 +59,7 @@ function Probe(startTerm, endTerm, cb) {
             //profiler.log();
             
             if (isDisambiguationPage($doc)) {
-                cb({
-                    success:false,
+                self.emit('error', {
                     msg:'Disambiguation page ' + makeLink(currentUrl.href),
                     stack:getTrace(stack)
                 });
@@ -83,8 +84,7 @@ function Probe(startTerm, endTerm, cb) {
                 var item = {url:currentUrl, title:title, $links:$links};
                 stack.push(item);
             
-                cb({
-                    success:true,
+                self.emit('complete', {
                     msg:'success',
                     stack:getTrace(stack)
                 });
@@ -95,8 +95,7 @@ function Probe(startTerm, endTerm, cb) {
             //profiler.log();
             
             if (!linkUrl) {
-                cb({
-                    success:false,
+                self.emit('error', {
                     msg:'Error finding an appropriate link in ' + makeLink(currentUrl.href),
                     stack:getTrace(stack)
                 });
@@ -110,8 +109,7 @@ function Probe(startTerm, endTerm, cb) {
             //profiler.log();
             
             if (isWikipediaUrl(nextUrl) == false) {
-                cb({
-                    success:false,
+                self.emit('error', {
                     msg:'Error finding an appropriate link in ' + makeLink(currentUrl.href),
                     stack:getTrace(stack)
                 });
@@ -123,8 +121,7 @@ function Probe(startTerm, endTerm, cb) {
                 var item = {url:currentUrl, title:title, $links:$links};
                 stack.push(item);
                 
-                cb({
-                    success:false,
+                self.emit('error', {
                     msg:'Circular URL reference to ' + makeLink(nextUrl.href),
                     stack:getTrace(stack)
                 });
@@ -145,8 +142,7 @@ function Probe(startTerm, endTerm, cb) {
         });
         
         request.on('error', function(data) {
-            cb({
-                success:false,
+            self.emit('error', {
                 msg:'Error loading ' + makeLink(currentUrl.href),
                 stack:getTrace(stack)
             });
@@ -279,8 +275,8 @@ function Probe(startTerm, endTerm, cb) {
     }
 }
 
-function probe(startTerm, endTerm, cb) {
-    return new Probe(startTerm, endTerm, cb);
+function probe(startTerm, endTerm) {
+    return new Probe(startTerm, endTerm);
 };
 
 function Profiler() {
