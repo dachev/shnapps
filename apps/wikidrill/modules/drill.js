@@ -43,8 +43,15 @@ function Probe(startTerm, endTerm) {
             request    = Rest.get(currentUrl.href, {followRedirects:true});
                 
         request.on('success', function(body) {
+            var domOpts = {
+                features: { 
+                    'FetchExternalResources'   : false,
+                    'ProcessExternalResources' : false
+                }
+            };
+            
             var profiler = new Profiler(),
-                window   = JsDom.jsdom(body).createWindow(),
+                window   = JsDom.jsdom(body, null, domOpts).createWindow(),
                 document = window.document;
             
             //profiler.log('parsing');
