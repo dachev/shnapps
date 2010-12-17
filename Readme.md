@@ -1,17 +1,16 @@
 
 # node-lab
       
-A collection of [node.js](http://nodejs.org) apps and experiments served on a single website.
+A collection of [node.js](http://nodejs.org) apps and experiments served from a single website.
+
+## Live demo
+[blago.dachev.com:8000](http://blago.dachev.com:8000)
 
 ## Installation
 
     $ git clone git://github.com/dachev/node-lab.git
 
     $ ./www.js -p 8000 -d .
-
-
-## Live demo
-[blago.dachev.com:8000](http://blago.dachev.com:8000)
 
 ## Node Compatibility
     
