@@ -13,7 +13,7 @@ $(function() {
     
     function initRemoteClock() {
     
-        var client = new Faye.Client(location.origin + '/faye', {
+        var client = new Faye.Client(location.host + '/faye', {
             timeout:120
         });
         client.subscribe('/rtclock/time', function(msg) {
