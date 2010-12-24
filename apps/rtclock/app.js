@@ -62,16 +62,12 @@ function init(bayeux) {
 }
 
 function Counter(client) {
-    var clients = {};
+    var lastCount = 0,
+        clients   = {};
     
     this.incoming = function(message, callback) {
         if (message.channel == '/rtclock/users/ping') {
-            var cid = message.clientId;
-            
-            if (!clients[cid]) {
-                client.publish('/rtclock/users', makeMessage(clients, 'join'));
-            }
-            clients[cid] = +new Date;
+            clients[message.clientId] = +new Date;
         }
         
         return callback(message);
@@ -79,7 +75,6 @@ function Counter(client) {
     
     function collect() {
         var keys  = Object.keys(clients),
-            count = keys.length,
             now   = +new Date;
         
         for (var i = 0; i < keys.length; i++) {
@@ -91,12 +86,16 @@ function Counter(client) {
             }
         }
         
-        if (Object.keys(clients).length != count) {
-            client.publish('/rtclock/users', makeMessage(clients, 'drop'));
+        var thisCount = Object.keys(clients).length;
+        if (thisCount != lastCount) {
+            var actionName = (thisCount > lastCount) ? 'join' : 'drop';
+            client.publish('/rtclock/users', makeMessage(clients, actionName));
         }
+        
+        lastCount = thisCount;
     }
     
-    setInterval(collect, 2000);
+    setInterval(collect, 1000);
 }
     
 function makeMessage(clients, action) {
