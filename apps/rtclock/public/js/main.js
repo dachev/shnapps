@@ -22,6 +22,10 @@ $(function() {
         client.subscribe('/rtclock/users', function(msg) {
             showNotification(msg.users);
         });
+        
+        setInterval(function() {
+            client.publish('/rtclock/users/ping');
+        }, 1000);
     }
     
     function showRemoteTime(time) {

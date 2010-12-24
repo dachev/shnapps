@@ -52,51 +52,51 @@ function init(bayeux) {
         client.publish('/rtclock/time', {time:+new Date});
     }, 1000);
     
+    client.subscribe('/rtclock/users/ping', function(msg) {
+    });
+    
     var counter = new Counter(client);
     bayeux.addExtension(counter);
     
     module.exports.rest = rest;
 }
 
-var c = 0;
 function Counter(client) {
-    var self    = this,
-        local   = client,
-        remote  = {};
+    var clients = {};
     
     this.incoming = function(message, callback) {
-        if (message.channel == '/meta/disconnect') {
-            console.log(--c);
-            
+        if (message.channel == '/rtclock/users/ping') {
             var cid = message.clientId;
             
-            if (remote[cid]) {
-                delete remote[cid];
-                local.publish('/rtclock/users', makeMessage(remote, 'drop'));
+            if (!clients[cid]) {
+                client.publish('/rtclock/users', makeMessage(clients, 'join'));
             }
+            clients[cid] = +new Date;
         }
         
         return callback(message);
     };
     
-    this.outgoing = function(message, callback) {
-        if (message.channel == '/meta/subscribe') {
-            if (message.subscription == '/rtclock/users') {
-                if (message.successful == true) {
-                    console.log(++c);
-            
-                    var cid = message.clientId;
-                    remote[cid] = true;
-                    
-                    process.nextTick(function() {
-                        local.publish('/rtclock/users', makeMessage(remote, 'join'));
-                    });
-                }
+    function collect() {
+        var keys  = Object.keys(clients),
+            count = keys.length,
+            now   = +new Date;
+        
+        for (var i = 0; i < keys.length; i++) {
+            var key       = keys[i],
+                timestamp = clients[key];
+        
+            if (timestamp < now-1000) {
+                delete clients[key];
             }
         }
         
-        return callback(message);
-    };
+        if (Object.keys(clients).length != count) {
+            client.publish('/rtclock/users', makeMessage(clients, 'drop'));
+        }
+    }
+    
+    setInterval(collect, 2000);
 }
     
 function makeMessage(clients, action) {
