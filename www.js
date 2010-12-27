@@ -175,15 +175,25 @@ installer.on('done', function() {
         docroot   = opts.docroot;
     
     // add a cron job to start the server on reboot
-    tab.on('loaded', tabsLoaded);
-    function tabsLoaded(tab) {
-        var command = 'cd ' + __dirname + ' && forever start ' + __filename + ' -d ' + docroot + ' -p ' +  port;
-        tab.removeAll(__filename);
+    tab.on('loaded', function(tab) {
+        var Npm = require('npm');
+        Npm.load({}, function (err, npm) {
+            if (err) { return; }
+            
+            var uuid         = '74d967a0-120b-11e0-ac64-0800200c9a66',
+                npmBinRoot   = npm.config.get('binroot'),
+                nodePath     = process.execPath,
+                wwwCommand   = __filename + ' -d ' + docroot + ' -p ' +  port + ' --uuid ' + uuid,
+                forevCommand = Path.join(npmBinRoot, 'forever'),
+                sysCommand   = forevCommand + ' start ' + wwwCommand;
+            
+            tab.removeAll(uuid);
         
-        var item = tab.create(command);
-        item.everyReboot();
-        tab.save();
-    }
+            var item = tab.create(sysCommand);
+            item.everyReboot();
+            tab.save();
+        });
+    });
     
     require.paths.unshift(docroot + '/modules');
     
