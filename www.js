@@ -158,7 +158,7 @@ function showBanner() {
 var Fs    = require('fs'),
     Exec  = require('child_process').exec,
     Path  = require('path'),
-    deps  = ['express', 'ejs', 'faye', 'optimist'];
+    deps  = ['express', 'ejs', 'faye', 'optimist', 'forever', 'crontab'];
 
 console.log('installing server dependencies');
 
@@ -167,10 +167,23 @@ installer.on('done', function() {
     var Express   = require('express'),
         Ejs       = require('ejs'),
         Faye      = require('faye'),
+        CronTab   = require('crontab'),
+        tab       = new CronTab(),
         argv      = require('optimist').argv,
         opts      = makeOptions(argv),
         port      = opts.port,
         docroot   = opts.docroot;
+    
+    // add a cron job to start the server on reboot
+    tab.on('loaded', tabsLoaded);
+    function tabsLoaded(tab) {
+        var command = 'cd ' + __dirname + ' && forever start ' + __filename + ' -d ' + docroot + ' -p ' +  port;
+        tab.removeAll(__filename);
+        
+        var item = tab.create(command);
+        item.everyReboot();
+        tab.save();
+    }
     
     require.paths.unshift(docroot + '/modules');
     
