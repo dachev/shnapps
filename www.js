@@ -105,22 +105,34 @@ function AppLoader(server, bayeux, docroot) {
 AppLoader.prototype = new process.EventEmitter();
 
 function DepInstaller(deps) {
-    var self    = this,
-        command = 'npm install ' + deps.join(' ');
+    var self = this,
+        Npm  = require('npm');
     
-    Exec(command, function(err, stdout, stderr) {
+    Npm.load({}, function (err, npm) {
         if (err) {
-            var lines = err.message.split('\n');
-            lines.forEach(function(line, idx) {
-                console.log(line);
-            });
-            process.exit(1);
+            dieWithError(err);
         }
-        
-        self.emit('done');
+            
+        npm.commands.install(deps, function(err, data) {
+            if (err) {
+                dieWithError(err);
+            }
+            
+            self.emit('done');
+        });
     });
+    
+    return;
 }
 DepInstaller.prototype = new process.EventEmitter();
+
+function dieWithError(err) {
+    var lines = err.message.split('\n');
+    lines.forEach(function(line, idx) {
+        console.log(line);
+    });
+    process.exit(1);
+}
 
 function makeOptions(argv) {
     var opts = {
