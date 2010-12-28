@@ -167,14 +167,13 @@ function showBanner() {
     console.log(new Array(banner.length+1).join('-'))
 }
 
-var Fs    = require('fs'),
-    Exec  = require('child_process').exec,
-    Path  = require('path'),
-    deps  = ['express', 'ejs', 'faye', 'optimist', 'forever', 'crontab'];
+var Fs   = require('fs'),
+    Path = require('path'),
+    deps = ['express', 'ejs', 'faye', 'optimist', 'forever', 'crontab'];
 
 console.log('installing server dependencies');
 
-var installer  = new DepInstaller(deps);
+var installer = new DepInstaller(deps);
 installer.on('done', function() {
     var Express   = require('express'),
         Ejs       = require('ejs'),
