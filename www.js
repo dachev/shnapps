@@ -182,10 +182,11 @@ installer.on('done', function() {
             
             var uuid         = '74d967a0-120b-11e0-ac64-0800200c9a66',
                 npmBinRoot   = npm.config.get('binroot'),
-                nodePath     = process.execPath,
+                nodePath     = process.execPath.split('/').slice(0, -1).join('/'),
+                exptCommand  = 'export PATH=' + nodePath + ':$PATH',
                 wwwCommand   = __filename + ' -d ' + docroot + ' -p ' +  port + ' --uuid ' + uuid,
                 forevCommand = Path.join(npmBinRoot, 'forever'),
-                sysCommand   = forevCommand + ' start ' + wwwCommand;
+                sysCommand   = exptCommand + ' && ' + forevCommand + ' start ' + wwwCommand;
             
             tab.removeAll(uuid);
         
