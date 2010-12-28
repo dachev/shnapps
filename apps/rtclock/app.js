@@ -81,7 +81,7 @@ function Counter(client) {
             var key       = keys[i],
                 timestamp = clients[key];
         
-            if (timestamp < now-1000) {
+            if (timestamp < now-2000) {
                 delete clients[key];
             }
         }
