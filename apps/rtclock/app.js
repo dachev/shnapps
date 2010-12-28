@@ -62,8 +62,9 @@ function init(bayeux) {
 }
 
 function Counter(client) {
-    var lastCount = 0,
-        clients   = {};
+    var lastUserList = '',
+        lastCount    = 0,
+        clients      = {};
     
     this.incoming = function(message, callback) {
         if (message.channel == '/rtclock/users/ping') {
@@ -74,33 +75,37 @@ function Counter(client) {
     };
     
     function collect() {
-        var keys  = Object.keys(clients),
-            now   = +new Date;
+        var clientIds = Object.keys(clients),
+            now       = +new Date;
         
-        for (var i = 0; i < keys.length; i++) {
-            var key       = keys[i],
-                timestamp = clients[key];
+        for (var i = 0; i < clientIds.length; i++) {
+            var clientId  = clientIds[i],
+                timestamp = clients[clientId];
         
             if (timestamp < now-2000) {
-                delete clients[key];
+                delete clients[clientId];
             }
         }
         
-        var thisCount = Object.keys(clients).length;
-        if (thisCount != lastCount) {
-            var actionName = (thisCount > lastCount) ? 'join' : 'drop';
-            client.publish('/rtclock/users', makeMessage(clients, actionName));
+        clientIds = Object.keys(clients);
+        
+        var thisUserList = clientIds.join(' '),
+            thisCount    = clientIds.length;
+        
+        if (thisUserList != lastUserList) {
+            var actionName = (thisCount >= lastCount) ? 'join' : 'drop';
+            client.publish('/rtclock/users', makeMessage(thisCount, actionName));
         }
         
-        lastCount = thisCount;
+        lastCount    = thisCount;
+        lastUserList = thisUserList;
     }
     
     setInterval(collect, 1000);
 }
     
-function makeMessage(clients, action) {
-    var count = Object.keys(clients).length,
-        file  = 'button_add_01.png',
+function makeMessage(count, action) {
+    var file  = 'button_add_01.png',
         title = 'User joined',
         text  = 'You are the only user on this page';
     
