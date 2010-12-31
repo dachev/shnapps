@@ -11,7 +11,6 @@ function Probe(startTerm, endTerm) {
         endUrl   = Url.parse(baseUrl + endTerm),
         stack    = [],
         $        = null,
-        $doc     = null,
         counter  = 0,
         maxHops  = 50;
     
@@ -43,27 +42,7 @@ function Probe(startTerm, endTerm) {
             request    = Rest.get(currentUrl.href, {followRedirects:true});
                 
         request.on('success', function(body) {
-            var domOpts = {
-                features: { 
-                    'FetchExternalResources'   : false,
-                    'ProcessExternalResources' : false
-                }
-            };
-            
-            var profiler = new Profiler(),
-                window   = JsDom.jsdom(body, null, domOpts).createWindow(),
-                document = window.document;
-            
-            //profiler.log('parsing');
-            
-            // jquery breaks without this
-            location  = window.location;
-            navigator = {userAgent:'Node.js'};
-            
-            $    = require('jquery').create(window);
-            $doc = $(document);
-            
-            //profiler.log();
+            var $doc = parsePage(body);
             
             if (isDisambiguationPage($doc)) {
                 self.emit('error', {
@@ -74,17 +53,11 @@ function Probe(startTerm, endTerm) {
                 return;
             }
             
-            //profiler.log();
-            
             var $h1      = $('#firstHeading'),
                 title    = $h1.text(),
                 $content = $doc.find('#bodyContent'),
                 $p       = $content.children().filter('p'),
-                $links   = $p.find('a').not(filterLinks),
-                $link    = $links.eq(0),
-                linkUrl  = $link.attr('href');
-            
-            //profiler.log('selectors');
+                $links   = $p.find('a').not(filterLinks);
             
             // done
             if (currentUrl.href.toLowerCase() == endUrl.href.toLowerCase()) {
@@ -99,9 +72,8 @@ function Probe(startTerm, endTerm) {
                 return;
             }
             
-            //profiler.log();
-            
-            if (!linkUrl) {
+            var nextUrl = pickLink(currentUrl, $links);
+            if (!nextUrl) {
                 self.emit('error', {
                     msg:'Error finding an appropriate link in ' + makeLink(currentUrl.href),
                     stack:getTrace(stack)
@@ -109,43 +81,12 @@ function Probe(startTerm, endTerm) {
                 
                 return;
             }
-            
-            var absUrl  = Url.resolve(currentUrl, linkUrl),
-                nextUrl = Url.parse(absUrl);
-            
-            //profiler.log();
-            
-            if (isWikipediaUrl(nextUrl) == false) {
-                self.emit('error', {
-                    msg:'Error finding an appropriate link in ' + makeLink(currentUrl.href),
-                    stack:getTrace(stack)
-                });
-                
-                return;
-            }
-            
-            if (isCirculating(nextUrl) == true) {
-                var item = {url:currentUrl, title:title, $links:$links};
-                stack.push(item);
-                
-                self.emit('error', {
-                    msg:'Circular URL reference to ' + makeLink(nextUrl.href),
-                    stack:getTrace(stack)
-                });
-                
-                return;
-            }
-            
-            //profiler.log();
-            //profiler.finalize();
             
             var item = {url:currentUrl, title:title, $links:$links};
             stack.push(item);
             
             counter++;
             loadPage(nextUrl);
-            
-            //console.log(item.url.href);
         });
         
         request.on('error', function(data) {
@@ -154,6 +95,49 @@ function Probe(startTerm, endTerm) {
                 stack:getTrace(stack)
             });
         });
+    }
+    
+    function pickLink(currentUrl, $links) {
+        for (var i = 0; i < $links.length; i++) {
+            var $link   = $links.eq(i),
+                linkUrl = $link.attr('href');
+            
+            if (!linkUrl) { continue; }
+            
+            var absUrl  = Url.resolve(currentUrl, linkUrl),
+                nextUrl = Url.parse(absUrl);
+            
+            if (isWikipediaUrl(nextUrl) == false) {
+                continue;
+            }
+            
+            if (isCircularUrl(nextUrl) == true) {
+                continue;
+            }
+            
+            return nextUrl;
+        }
+        
+        return null;
+    }
+    
+    function parsePage(body) {
+        var domOpts = {
+            features: { 
+                'FetchExternalResources'   : false,
+                'ProcessExternalResources' : false
+            }
+        };
+        
+        var window   = JsDom.jsdom(body, null, domOpts).createWindow(),
+            document = window.document;
+        
+        // jquery breaks without this
+        location  = window.location;
+        navigator = {userAgent:'Node.js'};
+        $         = require('jquery').create(window);
+        
+        return $(document);
     }
     
     function makeLink(url) {
@@ -175,7 +159,7 @@ function Probe(startTerm, endTerm) {
         return trace;
     }
     
-    function isCirculating(nextUrl) {
+    function isCircularUrl(nextUrl) {
         for (var i = 0; i < stack.length; i++) {
             var visitedUrl = stack[i].url;
             if (visitedUrl.href == nextUrl.href) {
