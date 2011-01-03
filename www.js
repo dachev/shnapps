@@ -178,15 +178,16 @@ installer.on('done', function() {
     var Express   = require('express'),
         Ejs       = require('ejs'),
         Faye      = require('faye'),
-        CronTab   = require('crontab'),
-        tab       = new CronTab(),
         argv      = require('optimist').argv,
         opts      = makeOptions(argv),
         port      = opts.port,
         docroot   = opts.docroot;
     
     // add a cron job to start the server on reboot
-    tab.on('loaded', function(tab) {
+    require('crontab').load(cronLoaded);
+    function cronLoaded(err, tab) {
+        if (err) { console.log(err); process.exit(1); }
+    
         var Npm = require('npm');
         Npm.load({}, function (err, npm) {
             if (err) { return; }
@@ -195,17 +196,17 @@ installer.on('done', function() {
                 npmBinRoot   = npm.config.get('binroot'),
                 nodePath     = process.execPath.split('/').slice(0, -1).join('/'),
                 exptCommand  = 'export PATH=' + nodePath + ':$PATH',
-                wwwCommand   = __filename + ' -d ' + docroot + ' -p ' +  port + ' --uuid ' + uuid,
+                wwwCommand   = __filename + ' -d ' + docroot + ' -p ' +  port,
                 forevCommand = Path.join(npmBinRoot, 'forever'),
                 sysCommand   = exptCommand + ' && ' + forevCommand + ' start ' + wwwCommand;
             
-            tab.removeAll(uuid);
+            tab.remove(tab.findComment(uuid));
         
-            var item = tab.create(sysCommand);
+            var item = tab.create(sysCommand, uuid);
             item.everyReboot();
             tab.save();
         });
-    });
+    };
     
     require.paths.unshift(docroot + '/modules');
     
