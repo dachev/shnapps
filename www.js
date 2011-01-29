@@ -222,7 +222,7 @@ installer.on('done', function() {
     server.use(Express.bodyDecoder());
     server.use(Express.methodOverride());
     server.use(Express.cookieDecoder());
-    server.use(Express.session());
+    server.use(Express.session({secret:'6e404410-2b6d-11e0-91fa-0800200c9a66'}));
     
     var bayeux = new Faye.NodeAdapter({
         mount   : '/faye',
