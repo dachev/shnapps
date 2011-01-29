@@ -210,9 +210,15 @@ installer.on('done', function() {
     
     require.paths.unshift(docroot + '/modules');
     
-    var server = Express.createServer();
+    var Parser = require('uaparser'),
+        server = Express.createServer();
+    
     server.use(Express.staticProvider(docroot + '/public'));
     server.use(Express.logger({ format: ':date | :remote-addr | :method | :url | :status | :response-time' }));
+    server.use(function(req, res, next) {
+        req.ua = Parser.parse(req.headers['user-agent'] || '');
+        next();
+    });
     server.use(Express.bodyDecoder());
     server.use(Express.methodOverride());
     server.use(Express.cookieDecoder());
