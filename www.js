@@ -169,7 +169,7 @@ function showBanner() {
 
 var Fs   = require('fs'),
     Path = require('path'),
-    deps = ['express', 'ejs', 'faye', 'optimist', 'forever', 'crontab'];
+    deps = ['express', 'ejs', 'faye', 'optimist', 'forever', 'crontab', 'http-proxy'];
 
 console.log('installing server dependencies');
 
@@ -178,6 +178,7 @@ installer.on('done', function() {
     var Express   = require('express'),
         Ejs       = require('ejs'),
         Faye      = require('faye'),
+        HttpProxy = require('http-proxy'),
         argv      = require('optimist').argv,
         opts      = makeOptions(argv),
         port      = opts.port,
@@ -218,6 +219,14 @@ installer.on('done', function() {
     server.use(function(req, res, next) {
         req.ua = Parser.parse(req.headers['user-agent'] || '');
         next();
+    });
+    server.use(function(req, res, next) {
+        if ((req.headers.host||'').indexOf('445movies.dachev.com') != 0) {
+            next();
+        }
+        
+        var proxy = new HttpProxy.HttpProxy(req, res);
+        proxy.proxyRequest(8000, 'localhost', req, res);
     });
     server.use(Express.bodyDecoder());
     server.use(Express.methodOverride());
