@@ -221,7 +221,7 @@ installer.on('done', function() {
         next();
     });
     server.use(function(req, res, next) {
-        if ((req.headers.host||'').indexOf('445movies.dachev.com') != 0) {
+        if ((req.headers.host||'').indexOf('openhouse.dachev.com') != 0) {
             next();
         }
         
