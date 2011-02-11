@@ -169,7 +169,7 @@ function showBanner() {
 
 var Fs   = require('fs'),
     Path = require('path'),
-    deps = ['express', 'ejs', 'faye', 'optimist', 'forever', 'crontab', 'http-proxy'];
+    deps = ['express', 'ejs', 'faye', 'optimist', 'forever', 'crontab'];
 
 console.log('installing server dependencies');
 
@@ -178,7 +178,6 @@ installer.on('done', function() {
     var Express   = require('express'),
         Ejs       = require('ejs'),
         Faye      = require('faye'),
-        HttpProxy = require('http-proxy'),
         argv      = require('optimist').argv,
         opts      = makeOptions(argv),
         port      = opts.port,
@@ -221,12 +220,20 @@ installer.on('done', function() {
         next();
     });
     server.use(function(req, res, next) {
-        if ((req.headers.host||'').indexOf('openhouse.dachev.com') != 0) {
-            next();
+        if ((req.headers.host||'').indexOf('openhouse.dachev.com') == 0) {
+	    res.redirect('http://openhouse.dachev.com:8000' + req.url, 301);
+            return;
+        }
+        if ((req.headers.host||'').indexOf('445movies.dachev.com') == 0) {
+	    res.redirect('http://445movies.dachev.com:8000' + req.url, 301);
+            return;
+        }
+        if ((req.headers.host||'').indexOf('lisa.dachev.com') == 0) {
+	    res.redirect('http://lisa.dachev.com:8000' + req.url, 301);
+            return;
         }
         
-        var proxy = new HttpProxy.HttpProxy(req, res);
-        proxy.proxyRequest(8000, 'localhost', req, res);
+        next();
     });
     server.use(Express.bodyDecoder());
     server.use(Express.methodOverride());
