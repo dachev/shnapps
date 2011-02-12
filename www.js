@@ -105,6 +105,14 @@ function AppLoader(server, bayeux, docroot) {
 AppLoader.prototype = new process.EventEmitter();
 
 function DepInstaller(deps) {
+    var self = this;
+    
+    setTimeout(function() {
+        self.emit('done');
+    }, 100);
+    
+    return;
+            
     var self = this,
         Npm  = require('npm');
     
