@@ -240,6 +240,10 @@ installer.on('done', function() {
 	    res.redirect('http://lisa.dachev.com:8000' + req.url, 301);
             return;
         }
+        if ((req.url||'').indexOf('/~') == 0) {
+            res.redirect('http://blago.dachev.com:8000' + req.url, 301);
+            return;
+        }
         
         next();
     });
