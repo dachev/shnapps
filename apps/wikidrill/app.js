@@ -57,7 +57,6 @@ function init(bayeux) {
         if (!args.start_term || !args.end_term) {
             result.msg = 'Start or end page is missing or invalid';
             res.send(result);
-            res.end();
             
             return;
         }
@@ -80,7 +79,6 @@ function drillWikipedia(Drill, res, startTerm, endTerm) {
         result.stack   = bit.stack;
         
         res.send(result);
-        res.end();
     });
         
     probe.on('complete', function(bit) {
@@ -90,6 +88,5 @@ function drillWikipedia(Drill, res, startTerm, endTerm) {
         result.stack   = bit.stack;
         
         res.send(result);
-        res.end();
     });
 }
