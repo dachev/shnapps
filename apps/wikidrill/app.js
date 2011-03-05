@@ -26,7 +26,7 @@ module.exports = {
     init   : init
 };
 
-function init(bayeux) {
+function init(server, pubsub) {
     var Path    = require('path'),
         Express = require('express'),
         Ejs     = require('ejs'),

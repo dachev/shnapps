@@ -24,7 +24,7 @@ module.exports = {
     init   : init
 };
 
-function init(bayeux) {
+function init(server, pubsub) {
     var Path    = require('path'),
         Express = require('express'),
         Ejs     = require('ejs'),
@@ -44,7 +44,7 @@ function init(bayeux) {
         res.render('index', {about:about});
     });
     
-    var client = bayeux.getClient();
+    var client = pubsub.getClient();
     setInterval(function() {
         client.publish('/rtclock/time', {time:+new Date});
     }, 1000);
@@ -53,7 +53,7 @@ function init(bayeux) {
     });
     
     var counter = new Counter(client);
-    bayeux.addExtension(counter);
+    pubsub.addExtension(counter);
     
     module.exports.rest = rest;
 }
