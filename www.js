@@ -221,7 +221,7 @@ installer.on('done', function() {
     var Parser = require('uaparser'),
         server = Express.createServer();
     
-    server.use(Express.staticProvider(docroot + '/public'));
+    server.use(Express.static(docroot + '/public'));
     server.use(Express.logger({ format: ':date | :remote-addr | :method | :url | :status | :response-time' }));
     server.use(function(req, res, next) {
         req.ua = Parser.parse(req.headers['user-agent'] || '');
@@ -247,9 +247,9 @@ installer.on('done', function() {
         
         next();
     });
-    server.use(Express.bodyDecoder());
+    server.use(Express.bodyParser());
     server.use(Express.methodOverride());
-    server.use(Express.cookieDecoder());
+    server.use(Express.cookieParser());
     server.use(Express.session({secret:'6e404410-2b6d-11e0-91fa-0800200c9a66'}));
     
     var bayeux = new Faye.NodeAdapter({

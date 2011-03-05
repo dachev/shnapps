@@ -30,7 +30,7 @@ function init(bayeux) {
         Ejs     = require('ejs'),
         rest    = Express.createServer();
     
-    rest.use('/rtclock', Express.staticProvider(__dirname + '/public'));
+    rest.use('/rtclock', Express.static(__dirname + '/public'));
     
     // configure views
     rest.set('views', __dirname + '/views');
@@ -41,10 +41,7 @@ function init(bayeux) {
     });
     
     rest.get('/rtclock', function(req, res, next) {
-        res.render('index', {
-            status:200,
-            locals:{about:about}
-        });
+        res.render('index', {about:about});
     });
     
     var client = bayeux.getClient();

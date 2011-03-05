@@ -33,7 +33,7 @@ function init(bayeux) {
         Drill   = require('drill'),
         rest    = Express.createServer();
     
-    rest.use('/wikidrill', Express.staticProvider(__dirname + '/public'));
+    rest.use('/wikidrill', Express.static(__dirname + '/public'));
     
     // configure views
     rest.set('views', __dirname + '/views');
@@ -44,10 +44,7 @@ function init(bayeux) {
     });
     
     rest.get('/wikidrill', function(req, res, next) {
-        res.render('index', {
-            status:200,
-            locals:{about:about}
-        });
+        res.render('index', {about:about});
     });
     
     rest.post('/wikidrill', function(req, res, next) {

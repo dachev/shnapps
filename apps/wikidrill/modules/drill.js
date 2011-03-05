@@ -53,8 +53,8 @@ function Probe(startTerm, endTerm) {
                 return;
             }
             
-            var $h1      = $('#firstHeading'),
-                title    = $h1.text(),
+            var $h1      = $doc.find('#firstHeading'),
+                title    = $h1.html(),
                 $content = $doc.find('#bodyContent'),
                 $p       = $content.children().filter('p'),
                 $links   = $p.find('a').not(filterLinks);
