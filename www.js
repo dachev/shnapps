@@ -1,22 +1,9 @@
 #!/usr/bin/env node
 
+var Fs    = require('fs')
+    ,Path = require('path');
+        
 function AppLoader(server, bayeux, docroot) {
-    var self = this;
-    
-    console.log('loading apps');
-    
-    var apps  = loadApps(docroot + '/apps'),
-        deps  = getDeps(apps);
-    
-    console.log('installing app dependencies');
-    
-    var installer = new DepInstaller(deps);
-    installer.on('done', function() {
-        console.log('initializing apps');
-        initApps(bayeux, apps);
-        console.log('ready');
-    });
-    
     function loadApps(appDir) {
         var dirs = Fs.readdirSync(appDir),
             apps = [];
@@ -32,15 +19,13 @@ function AppLoader(server, bayeux, docroot) {
             require.paths.unshift(path + '/modules');
             
             var file = path + '/app.js',
-                app  = require(file),
-                deps = getRequires(app.about);
+                app  = require(file);
             
             Fs.watchFile(file, function(curr, prev) {
                 process.exit(0);
             });
             
             apps[name] = {
-                deps : deps,
                 api  : app
             }
         });
@@ -48,99 +33,27 @@ function AppLoader(server, bayeux, docroot) {
         return apps;
     }
     
-    function initApps(bayeux, apps) {
-        Object.keys(apps).forEach(function(name, idx) {
-            var api = apps[name].api;
-            
-            api.init(bayeux);
-            
-            server.use(api.rest);
-        });
+    console.log('loading apps');
+    
+    var self  = this
+        ,apps = loadApps(docroot + '/apps');
         
+    console.log('initializing apps');
+    
+    Object.keys(apps).forEach(function(name, idx) {
+        var api = apps[name].api;
+        
+        api.init(bayeux);
+        
+        server.use(api.rest);
+    });
+    
+    process.nextTick(function() {
         self.emit('done');
-    }
-    
-    function getDeps(apps) {
-        var deps = {};
-        
-        Object.keys(apps).forEach(function(name, idx) {
-            var app = apps[name];
-            
-            for (var i = 0; i < app.deps.length; i++) {
-                var dep = app.deps[i];
-                deps[dep] = true;
-            }
-        });
-        
-        return Object.keys(deps);
-    }
-    
-    function getRequires(abouts) {
-        var deps = [];
-        
-        for (var i = 0; i < abouts.length; i++) {
-            var about = abouts[i],
-                topic = about.name,
-                items = about.items;
-            
-            if (topic != 'require' || !items) {
-                continue;
-            }
-            
-            for (var j = 0; j < items.length; j++) {
-                var item = items[j],
-                    name = item.name;
-            
-                if (!name) {
-                    continue;
-                }
-                
-                deps.push(name);
-            }
-        }
-        
-        return deps;
-    }
+        console.log('ready');
+    });
 }
 AppLoader.prototype = new process.EventEmitter();
-
-function DepInstaller(deps) {
-    var self = this;
-    
-    setTimeout(function() {
-        self.emit('done');
-    }, 100);
-    
-    return;
-            
-    var self = this,
-        Npm  = require('npm');
-    
-    Npm.load({}, function (err, npm) {
-        if (err) {
-            dieWithError(err);
-        }
-            
-        npm.commands.install(deps, function(err, data) {
-            if (err) {
-                dieWithError(err);
-            }
-            
-            self.emit('done');
-        });
-    });
-    
-    return;
-}
-DepInstaller.prototype = new process.EventEmitter();
-
-function dieWithError(err) {
-    var lines = err.message.split('\n');
-    lines.forEach(function(line, idx) {
-        console.log(line);
-    });
-    process.exit(1);
-}
 
 function makeOptions(argv) {
     var opts = {
@@ -175,21 +88,14 @@ function showBanner() {
     console.log(new Array(banner.length+1).join('-'))
 }
 
-var Fs   = require('fs'),
-    Path = require('path'),
-    deps = ['express', 'ejs', 'faye', 'optimist', 'forever', 'crontab'];
-
-console.log('installing server dependencies');
-
-var installer = new DepInstaller(deps);
-installer.on('done', function() {
-    var Express   = require('express'),
-        Ejs       = require('ejs'),
-        Faye      = require('faye'),
-        argv      = require('optimist').argv,
-        opts      = makeOptions(argv),
-        port      = opts.port,
-        docroot   = opts.docroot;
+function init() {
+    var Express    = require('express')
+        ,Ejs       = require('ejs')
+        ,Faye      = require('faye')
+        ,argv      = require('optimist').argv
+        ,opts      = makeOptions(argv)
+        ,port      = opts.port
+        ,docroot   = opts.docroot;
     
     // add a cron job to start the server on reboot
     require('crontab').load(cronLoaded);
@@ -229,15 +135,15 @@ installer.on('done', function() {
     });
     server.use(function(req, res, next) {
         if ((req.headers.host||'').indexOf('openhouse.dachev.com') == 0) {
-	    res.redirect('http://openhouse.dachev.com:8000' + req.url, 301);
+        res.redirect('http://openhouse.dachev.com:8000' + req.url, 301);
             return;
         }
         if ((req.headers.host||'').indexOf('445movies.dachev.com') == 0) {
-	    res.redirect('http://445movies.dachev.com:8000' + req.url, 301);
+        res.redirect('http://445movies.dachev.com:8000' + req.url, 301);
             return;
         }
         if ((req.headers.host||'').indexOf('lisa.dachev.com') == 0) {
-	    res.redirect('http://lisa.dachev.com:8000' + req.url, 301);
+        res.redirect('http://lisa.dachev.com:8000' + req.url, 301);
             return;
         }
         if ((req.url||'').indexOf('/~') == 0) {
@@ -291,8 +197,9 @@ installer.on('done', function() {
         
         server.listen(port);
     });
-});
+}
 
+init();
 
 
 
