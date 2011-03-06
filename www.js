@@ -195,20 +195,21 @@ function init() {
         });
         
         server.use(function(req, res) {
+            res.statusCode = 404;
             res.render(opts.docroot + '/views/404', {
-                layout : opts.docroot + '/views/layout',
-                status : 404,
-                locals : {request: req}
+                layout  : opts.docroot + '/views/layout',
+                request : req
             });
         });
         
         server.error(function(err, req, res) {
             console.dir(err);
             
+            res.statusCode = 500;
             res.render(opts.docroot + '/views/500', {
-                layout : opts.docroot + '/views/layout',
-                status : 500,
-                locals : {request: req}
+                layout  : opts.docroot + '/views/layout',
+                request : req,
+                msg     : 'Sorry an error has occurred.'
             });
         });
         
