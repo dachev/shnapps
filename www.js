@@ -151,7 +151,7 @@ function init() {
     server.configure('production', function() {
         var oneYear = 31557600000;
         
-        server.use(Express.static({root:opts.docroot + '/public', maxAge:oneYear}));
+        server.use(Express.static(opts.docroot + '/public', {maxAge:oneYear}));
         server.use(Express.errorHandler());
         server.use(function(req, res, next) {
             if ((req.headers.host||'').indexOf('openhouse.dachev.com') == 0) {
