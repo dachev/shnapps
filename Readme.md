@@ -4,7 +4,7 @@
 A collection of [node.js](http://nodejs.org) apps and experiments served from a single website.
 
 ## Live demo
-[blago.dachev.com:8000](http://blago.dachev.com:8000)
+[blago.dachev.com](http://blago.dachev.com)
 
 ## Installation
 
