@@ -1,0 +1,62 @@
+html,
+body {
+    overflow:hidden;
+}
+
+html,
+body {
+    width:100%;
+    height:100%;
+}
+
+body {
+    background-color:#22252A;
+}
+
+.wrapper {
+    height:100%;
+    overflow-y:scroll;
+}
+.conversation {
+    display:block;
+    margin:10px 0 50px 0;
+    color:#FFF;
+}
+.conversation li {
+    position:relative;
+    display:block;
+    padding: 0 10px 0 10px;
+    font-family: DejaVu Sans Mono, fixed;
+    font-size: 20px;
+}
+.conversation li .name {
+    position: absolute;
+    width: 50px;
+    text-align: right;
+    font-weight: bold;
+    color: #FFF;
+}
+.conversation li .text {
+    display: block;
+    margin: 0 0 0 55px;
+    color: #EEE;
+}
+
+.form {
+    position:fixed;
+    bottom:0;
+    left:0;
+    display:block;
+    width:100%;
+}
+.form .text {
+    box-sizing: border-box; /* css3 rec */
+    -moz-box-sizing: border-box; /* ff2 */
+    -ms-box-sizing: border-box; /* ie8 */
+    -webkit-box-sizing: border-box; /* safari3 */
+    -khtml-box-sizing: border-box; /* konqueror */
+    display:block;
+    width:100%;
+    height:40px;
+    padding:5px 10px;
+}
