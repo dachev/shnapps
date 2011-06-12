@@ -5,7 +5,7 @@ var about = [{
             {name:'ejs',     link:'https://github.com/visionmedia/ejs'},
             {name:'jsdom',   link:'https://github.com/tmpvar/jsdom'},
             {name:'jquery',  link:null},
-            {name:'restler-aaronblohowiak', link:'https://github.com/aaronblohowiak/restler'}
+            {name:'restler', link:'https://github.com/ashleydev/restler'}
             
         ]
     },
@@ -30,7 +30,7 @@ function init(server, pubsub) {
     var Path    = require('path'),
         Express = require('express'),
         Ejs     = require('ejs'),
-        Drill   = require('drill'),
+        Drill   = require('./modules/drill'),
         rest    = Express.createServer();
     
     rest.use('/wikidrill', Express.static(__dirname + '/public'));

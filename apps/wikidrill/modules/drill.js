@@ -1,4 +1,4 @@
-var Rest   = require('restler-aaronblohowiak'),
+var Rest   = require('restler'),
     JsDom  = require('jsdom'),
     Url    = require('url');
 

@@ -16,8 +16,6 @@ function AppLoader(server, bayeux, docroot) {
                 return;
             }
             
-            require.paths.unshift(path + '/modules');
-            
             var file = path + '/app.js',
                 app  = require(file);
             
@@ -124,9 +122,7 @@ function init() {
         });
     };
     
-    require.paths.unshift(opts.docroot + '/modules');
-    
-    var Parser = require('uaparser'),
+    var Parser = require('./modules/uaparser'),
         server = Express.createServer();
     
     server.set('env', opts.env);
