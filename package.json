@@ -1,5 +1,5 @@
 {
-    "name":"modules",
+    "name":"www",
     "version":"0.1.0",
     "dependencies"   : {
         "crontab"    : ">= 0.2.10",
