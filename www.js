@@ -100,6 +100,11 @@ function init() {
     
     var server = Express.createServer();
     
+    // set root templating
+    server.set('views', __dirname + '/views');
+    server.set('view engine', 'html');
+    server.register('.html', Ejs);
+    
     // add middleware declared in config file
     var middleware = config.web.middleware||[];
     for (var i = 0; i < middleware.length; i++) {
@@ -122,10 +127,6 @@ function init() {
     
     var loader = new AppLoader(server, bayeux, config.web.docroot);
     loader.on('done', function() {
-        server.set('views', __dirname + '/views');
-        server.set('view engine', 'html');
-        server.register('.html', Ejs);
-        
         server.get('/', function(req, res, next) {
             res.render(__dirname + '/views/index', {
                 layout : __dirname + '/views/layout',
