@@ -5,26 +5,24 @@ var common  = [
     Express.bodyParser(),
     Express.methodOverride(),
     Express.cookieParser(),
-    Express.session({secret:'secret'})
+    Express.session({secret:'SECRET_STRING'})
 ];
 
 module.exports = {
     development : {
         web : {
-            docroot : 'path',
+            docroot    : '/ABSOLUTE/PATH/TO/DOCUMENT/ROOT',
             port    : 8002,
             middleware : common.concat([
-                Express.static('path'),
                 Express.errorHandler({dumpExceptions:true, showStack:true})
             ])
         }
     },
     production  : {
         web : {
-            docroot    : 'path',
+            docroot    : '/ABSOLUTE/PATH/TO/DOCUMENT/ROOT',
             port       : 8002,
             middleware : common.concat([
-                Express.static('path', {maxAge:oneYear}),
                 Express.errorHandler()
             ])
         }

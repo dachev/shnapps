@@ -4,12 +4,12 @@ var Fs   = require('fs')
 var Path = require('path');
 
 function AppLoader(server, bayeux, docroot) {
-    function loadApps(appDir) {
-        var dirs = Fs.readdirSync(appDir);
+    function loadApps(docroot) {
+        var dirs = Fs.readdirSync(docroot);
         var apps = [];
             
         dirs.forEach(function(name, idx) {
-            var path  = docroot + '/apps/' + name;
+            var path  = Path.join(docroot, name);
             var stats = Fs.statSync(path);
             
             if (stats.isDirectory() == false) {
@@ -29,7 +29,7 @@ function AppLoader(server, bayeux, docroot) {
         return apps;
     }
     
-    var apps = loadApps(docroot + '/apps');
+    var apps = loadApps(docroot);
     
     Object.keys(apps).forEach(function(name, idx) {
         var app = apps[name];
@@ -98,11 +98,20 @@ function init() {
         });
     };
     
-    var middleware = config.web.middleware||[];
-    var server     = Express.createServer();
+    var server = Express.createServer();
     
+    // add middleware declared in config file
+    var middleware = config.web.middleware||[];
     for (var i = 0; i < middleware.length; i++) {
         server.use(middleware[i]);
+    }
+    
+    // set root public folder
+    if (opts.env == 'production') {
+        server.use(Express.static(__dirname + '/public', {maxAge:oneYear}));
+    }
+    else {
+        server.use(Express.static(__dirname + '/public'));
     }
     
     var bayeux = new Faye.NodeAdapter({
@@ -113,21 +122,21 @@ function init() {
     
     var loader = new AppLoader(server, bayeux, config.web.docroot);
     loader.on('done', function() {
-        server.set('views', config.web.docroot + '/views');
+        server.set('views', __dirname + '/views');
         server.set('view engine', 'html');
         server.register('.html', Ejs);
         
         server.get('/', function(req, res, next) {
-            res.render(config.web.docroot + '/views/index', {
-                layout : config.web.docroot + '/views/layout',
+            res.render(__dirname + '/views/index', {
+                layout : __dirname + '/views/layout',
                 locals : {request: req}
             });
         });
         
         server.use(function(req, res) {
             res.statusCode = 404;
-            res.render(config.web.docroot + '/views/404', {
-                layout  : config.web.docroot + '/views/layout',
+            res.render(__dirname + '/views/404', {
+                layout  : __dirname + '/views/layout',
                 request : req
             });
         });
@@ -136,8 +145,8 @@ function init() {
             console.dir(err);
             
             res.statusCode = 500;
-            res.render(config.web.docroot + '/views/500', {
-                layout  : config.web.docroot + '/views/layout',
+            res.render(__dirname + '/views/500', {
+                layout  : __dirname + '/views/layout',
                 request : req,
                 msg     : 'Sorry an error has occurred.'
             });
