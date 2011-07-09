@@ -85,7 +85,7 @@ function init() {
                 ,npmBinRoot   = npm.config.get('binroot')
                 ,nodePath     = process.execPath.split('/').slice(0, -1).join('/')
                 ,exptCommand  = 'export PATH=' + nodePath + ':$PATH'
-                ,options      = ' -e ' + config.web.env
+                ,options      = ' -e ' + opts.env
                 ,wwwCommand   = __filename + options
                 ,forevCommand = Path.join(npmBinRoot, 'forever')
                 ,sysCommand   = exptCommand + ' && ' + forevCommand + ' start ' + wwwCommand;
