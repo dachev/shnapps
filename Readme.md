@@ -7,7 +7,7 @@ A [node.js](http://nodejs.org) application server capable of hosting multiple we
 [blago.dachev.com](http://blago.dachev.com)
 
 ## Installation
-    
+``` bash
     // Create the docroot. This is where all of your apps will go.
     $ mkdir -p /path/to/your/docroot
     
@@ -26,9 +26,9 @@ A [node.js](http://nodejs.org) application server capable of hosting multiple we
     
     // Run
     $ ./www.js -e development
-
+```
 Open your browser and load [http://127.0.0.1:YOUR_PORT](http://127.0.0.1:YOUR_PORT). You should see a default page. Now you can install some example apps:
-
+``` bash
     // Get the code
     $ cd /path/to/your/docroot
     $ git clone git@github.com:dachev/shnapps-wikidrill.git
@@ -36,7 +36,7 @@ Open your browser and load [http://127.0.0.1:YOUR_PORT](http://127.0.0.1:YOUR_PO
     
     // Install dependancies.
     $ npm install .
-
+```
 When you are done. Restart the server and go to [http://127.0.0.1:YOUR_PORT](http://127.0.0.1:YOUR_PORT). You should see a link to the wikidrill app.
 
 ## Node Compatibility
