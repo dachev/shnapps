@@ -2,34 +2,29 @@
 
 var Fs   = require('fs')
 var Path = require('path');
+var apps = {};
 
 function AppLoader(server, bayeux, docroot) {
-    function loadApps(docroot) {
-        var dirs = Fs.readdirSync(docroot);
-        var apps = [];
-            
-        dirs.forEach(function(name, idx) {
-            var path  = Path.join(docroot, name);
-            var stats = Fs.statSync(path);
-            
-            if (stats.isDirectory() == false) {
-                return;
-            }
-            
-            var file = path + '/app.js';
-            var app  = require(file);
-            
-            Fs.watchFile(file, function(curr, prev) {
-                process.exit(0);
-            });
-            
-            apps[name] = app;
+    var dirs = Fs.readdirSync(docroot);
+    
+    // load app.js files
+    dirs.forEach(function(name, idx) {
+        var path  = Path.join(docroot, name);
+        var stats = Fs.statSync(path);
+        
+        if (stats.isDirectory() == false) {
+            return;
+        }
+        
+        var file = path + '/app.js';
+        var app  = require(file);
+        
+        Fs.watchFile(file, function(curr, prev) {
+            process.exit(0);
         });
         
-        return apps;
-    }
-    
-    var apps = loadApps(docroot);
+        apps[name] = app;
+    });
     
     Object.keys(apps).forEach(function(name, idx) {
         var app = apps[name];
@@ -131,7 +126,7 @@ function init() {
         server.get('/', function(req, res, next) {
             res.render(__dirname + '/views/index', {
                 layout : __dirname + '/views/layout',
-                locals : {request: req}
+                locals : {request: req, apps:Object.keys(apps)}
             });
         });
         

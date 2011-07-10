@@ -5,10 +5,9 @@
     <div class="vbox center">
         <img src="/images/logo.png"/>
         <ul class="links">
-            <li><a href="/rtclock">Remote Clock</a></li>
-            <li><a href="/wikidrill">Wiki Drill</a></li>
-            <li><a href="/modules">Modules</a></li>
-            <li><a href="/pgbot">Paul Graham Bot</a></li>
+            <% for (var i = 0; i < apps.length; i++) { %>
+                <li><a href="/<%= apps[i] %>"><%= apps[i] %></a></li>
+            <% } %>
         </ul>
     </div>
 </div>
