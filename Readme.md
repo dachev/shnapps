@@ -15,6 +15,9 @@ A [node.js](http://nodejs.org) application server capable of hosting multiple we
     $ git clone git@github.com:dachev/shnapps.git
     $ cd shnapps
     
+    // Install dependancies.
+    $ npm install .
+    
     // Create the config file.
     $ cp config.txt.js config.js
     
