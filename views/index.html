@@ -5,8 +5,8 @@
     <div class="vbox center">
         <img src="/images/logo.png"/>
         <ul class="links">
-            <% for (var i = 0; i < apps.length; i++) { %>
-                <li><a href="/<%= apps[i] %>"><%= apps[i] %></a></li>
+            <% for (name in apps) if (apps.hasOwnProperty(name) && apps[name].hidden != true) { %>
+                <li><a href="/<%= name %>"><%= name %></a></li>
             <% } %>
         </ul>
     </div>

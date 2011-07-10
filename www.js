@@ -126,7 +126,7 @@ function init() {
         server.get('/', function(req, res, next) {
             res.render(__dirname + '/views/index', {
                 layout : __dirname + '/views/layout',
-                locals : {request: req, apps:Object.keys(apps)}
+                locals : {request: req, apps:apps}
             });
         });
         
