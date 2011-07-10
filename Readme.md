@@ -1,5 +1,5 @@
 
-# node-lab
+# shnapps
       
 A collection of [node.js](http://nodejs.org) apps and experiments served from a single website.
 
@@ -8,15 +8,15 @@ A collection of [node.js](http://nodejs.org) apps and experiments served from a 
 
 ## Installation
 
-    $ git clone git://github.com/dachev/node-lab.git
+    $ git clone git@github.com:dachev/shnapps.git
 
     $ node-lab/www.js -p 8000 -d node-lab
 
 ## Node Compatibility
     
-The latest revision of node-lab is compatible with node --version:
+The latest revision of shnapps is compatible with node --version:
 
-    v0.2.5
+    v0.4.9
 
 ## License 
 

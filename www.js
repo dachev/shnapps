@@ -113,6 +113,7 @@ function init() {
     
     // set root public folder
     if (opts.env == 'production') {
+        var oneYear = 31557600000;
         server.use(Express.static(__dirname + '/public', {maxAge:oneYear}));
     }
     else {
