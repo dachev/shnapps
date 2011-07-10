@@ -23,7 +23,7 @@ function AppLoader(server, bayeux, docroot) {
             process.exit(0);
         });
         
-        apps[name] = app;
+        apps[app.name] = app;
     });
     
     Object.keys(apps).forEach(function(name, idx) {
@@ -31,7 +31,7 @@ function AppLoader(server, bayeux, docroot) {
         
         app.init(server, bayeux);
         
-        server.use(app.rest);
+        server.use('/'+name, app.rest);
     });
     
     var self = this;
