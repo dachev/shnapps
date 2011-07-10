@@ -1,16 +1,39 @@
 
 # shnapps
       
-A collection of [node.js](http://nodejs.org) apps and experiments served from a single website.
+A [node.js](http://nodejs.org) application server capable of hosting multiple websites.
 
 ## Live demo
 [blago.dachev.com](http://blago.dachev.com)
 
 ## Installation
-
+    
+    // Create the docroot. This is where all of your apps will go. For example:
+    $ mkdir -p /path/to/your/docroot
+    
+    // Clone the shnapps repo.
     $ git clone git@github.com:dachev/shnapps.git
+    $ cd shnapps
+    
+    // Create config file.
+    $ cp config.txt.js config.js
+    
+    // Edit configuration. Make sure to set docroot to the path from step 1.
+    $ edit config.js
+    
+    // Run
+    $ ./www.js -e development
 
-    $ node-lab/www.js -p 8000 -d node-lab
+Open your browser and load [http://127.0.0.1:YOUR_PORT](http://127.0.0.1:YOUR_PORT). You should see a default page. You can now install some example apps:
+    // Get the code
+    $ cd /path/to/your/docroot
+    $ git clone git@github.com:dachev/shnapps-wikidrill.git
+    $ cd shnapps-wikidrill
+    
+    // Install dependancies.
+    $ npm install .
+
+When you are done. Restart the server and go to [http://127.0.0.1:YOUR_PORT](http://127.0.0.1:YOUR_PORT). You should see a link to the wikidrill app.
 
 ## Node Compatibility
     
