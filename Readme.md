@@ -8,14 +8,14 @@ A [node.js](http://nodejs.org) application server capable of hosting multiple we
 
 ## Installation
     
-    // Create the docroot. This is where all of your apps will go. For example:
+    // Create the docroot. This is where all of your apps will go.
     $ mkdir -p /path/to/your/docroot
     
     // Clone the shnapps repo.
     $ git clone git@github.com:dachev/shnapps.git
     $ cd shnapps
     
-    // Create config file.
+    // Create the config file.
     $ cp config.txt.js config.js
     
     // Edit configuration. Make sure to set docroot to the path from step 1.
@@ -24,7 +24,8 @@ A [node.js](http://nodejs.org) application server capable of hosting multiple we
     // Run
     $ ./www.js -e development
 
-Open your browser and load [http://127.0.0.1:YOUR_PORT](http://127.0.0.1:YOUR_PORT). You should see a default page. You can now install some example apps:
+Open your browser and load [http://127.0.0.1:YOUR_PORT](http://127.0.0.1:YOUR_PORT). You should see a default page. Now you can install some example apps:
+
     // Get the code
     $ cd /path/to/your/docroot
     $ git clone git@github.com:dachev/shnapps-wikidrill.git
