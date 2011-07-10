@@ -27,6 +27,7 @@ A [node.js](http://nodejs.org) application server capable of hosting multiple we
     // Run
     $ ./www.js -e development
 ```
+
 Open your browser and load [http://127.0.0.1:YOUR_PORT](http://127.0.0.1:YOUR_PORT). You should see a default page. Now you can install some example apps:
 ``` bash
     // Get the code
@@ -37,6 +38,7 @@ Open your browser and load [http://127.0.0.1:YOUR_PORT](http://127.0.0.1:YOUR_PO
     // Install dependancies.
     $ npm install .
 ```
+
 When you are done. Restart the server and go to [http://127.0.0.1:YOUR_PORT](http://127.0.0.1:YOUR_PORT). You should see a link to the wikidrill app.
 
 ## Node Compatibility
