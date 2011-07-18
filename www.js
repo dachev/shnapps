@@ -154,6 +154,10 @@ function init() {
     });
 }
 
+process.on('uncaughtException', function(err) {
+    console.log(err);
+});
+
 init();
 
 
