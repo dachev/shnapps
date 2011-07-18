@@ -94,6 +94,7 @@ function init() {
     };
     
     var server = Express.createServer();
+    server.set('env', opts.env);
     
     // set root templating
     server.set('views', __dirname + '/views');
