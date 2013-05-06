@@ -47,7 +47,7 @@ When you are done. Restart the server and go to [http://127.0.0.1:YOUR_PORT](htt
     
 The latest revision of shnapps is compatible with node --version:
 
-    v0.4.9
+    v0.6.0
 
 ## License 
 
