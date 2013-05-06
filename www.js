@@ -72,25 +72,19 @@ function init() {
     function cronLoaded(err, tab) {
         if (err) { console.log(err); process.exit(1); }
     
-        var Npm = require('npm');
-        Npm.load({}, function (err, npm) {
-            if (err) { return; }
-            
-            var uuid          = '74d967a0-120b-11e0-ac64-0800200c9a66'
-                ,npmBinRoot   = npm.config.get('binroot')
-                ,nodePath     = process.execPath.split('/').slice(0, -1).join('/')
-                ,exptCommand  = 'export PATH=' + nodePath + ':$PATH'
-                ,options      = ' -e ' + opts.env
-                ,wwwCommand   = __filename + options
-                ,forevCommand = Path.join(npmBinRoot, 'forever')
-                ,sysCommand   = exptCommand + ' && ' + forevCommand + ' start ' + wwwCommand;
-            
-            tab.remove(tab.findComment(uuid));
+        var uuid          = '74d967a0-120b-11e0-ac64-0800200c9a66'
+            ,nodePath     = process.execPath.split('/').slice(0, -1).join('/')
+            ,exptCommand  = 'export PATH=' + nodePath + ':$PATH'
+            ,options      = ' -e ' + opts.env
+            ,wwwCommand   = __filename + options
+            ,forevCommand = 'forever'
+            ,sysCommand   = exptCommand + ' && ' + forevCommand + ' start ' + wwwCommand;
         
-            var item = tab.create(sysCommand, uuid);
-            item.everyReboot();
-            tab.save();
-        });
+        tab.remove(tab.findComment(uuid));
+    
+        var item = tab.create(sysCommand, uuid);
+        item.everyReboot();
+        tab.save();
     };
     
     var server = Express.createServer();
