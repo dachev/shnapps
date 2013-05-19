@@ -6,7 +6,7 @@
     "utml"       : "git://github.com/dachev/utml.git#master",
     "faye"       : "= 0.8.9",
     "forever"    : "= 0.10.8",
-    "crontab"    : "= 0.3.3",
+    "crontab"    : "= 0.3.4",
     "commander"  : "= 1.1.1",
     "colors"     : "= 0.6.0",
     "underscore" : "= 1.4.4"
