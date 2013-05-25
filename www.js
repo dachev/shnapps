@@ -112,7 +112,7 @@ function init() {
     });
     
     rest.use(function(req, res) {
-      res.statusCode = 404;
+      res.status(404);
       res.render(__dirname + '/views/404', {
         locals : {
           request : req,
@@ -124,7 +124,7 @@ function init() {
     rest.use(function(err, req, res) {
       console.error(err);
       
-      res.statusCode = 500;
+      res.status(500);
       res.render(__dirname + '/views/500', {
         locals : {
           request : req,
