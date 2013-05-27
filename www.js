@@ -1,9 +1,10 @@
 #!/usr/bin/env node
 
-var fs   = require('fs')
-var path = require('path');
-var _    = require('underscore');
-var apps = {};
+var fs      = require('fs')
+var path    = require('path');
+var _       = require('underscore');
+var inflate = require('./lib/inflate');
+var apps    = {};
 
 function AppLoader(rest, pubsub, docroot) {
   var dirs = fs.readdirSync(docroot);
@@ -79,6 +80,9 @@ function init() {
   rest.set('views', __dirname + '/views');
   rest.set('view engine', 'html');
   rest.engine('html', utml.__express);
+
+  // add deflate middleware
+  rest.use(inflate());
   
   // add middleware declared in config file
   var middleware = config.web.middleware||[];
