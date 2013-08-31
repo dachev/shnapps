@@ -62,7 +62,7 @@ function init() {
       var uuid         = '74d967a0-120b-11e0-ac64-0800200c9a66';
       var nodePath     = process.execPath.split('/').slice(0, -1).join('/');
       var exptCommand  = 'export PATH=' + nodePath + ':$PATH';
-      var options      = ' -e ' + program.environment;
+      var options      = ' -e ' + program.environment + ' -c ' + program.config;
       var wwwCommand   = __filename + options;
       var forevCommand = path.join(__dirname, 'node_modules', 'forever', 'bin', 'forever');
       var sysCommand   = exptCommand + ' && ' + forevCommand + ' start ' + wwwCommand;
