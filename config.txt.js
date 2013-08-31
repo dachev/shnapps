@@ -1,30 +1,23 @@
-var Express = require('express');
-var oneYear = 31557600000;
+var express = module.parent.require('express');
+var parser  = module.parent.require('./lib/uaparser');
 var common  = [
-    Express.logger({ format: ':date | :remote-addr | :method | :url | :status | :response-time' }),
-    Express.bodyParser(),
-    Express.methodOverride(),
-    Express.cookieParser(),
-    Express.session({secret:'SECRET_STRING'})
+  express.logger({ format: ':date | :remote-addr | :method | :url | :status | :response-time' }),
+  express.bodyParser(),
+  express.methodOverride(),
+  express.cookieParser(),
+  express.session({secret:'6e404410-2b6d-11e0-91fa-0800200c9a66'}),
+  function(req, res, next) {
+    req.ua = parser.parse(req.headers['user-agent'] || '');
+    next();
+  }
 ];
 
 module.exports = {
-    development : {
-        web : {
-            docroot    : '/ABSOLUTE/PATH/TO/DOCUMENT/ROOT',
-            port    : 8002,
-            middleware : common.concat([
-                Express.errorHandler({dumpExceptions:true, showStack:true})
-            ])
-        }
-    },
-    production  : {
-        web : {
-            docroot    : '/ABSOLUTE/PATH/TO/DOCUMENT/ROOT',
-            port       : 8002,
-            middleware : common.concat([
-                Express.errorHandler()
-            ])
-        }
-    }
+  web : {
+    docroot : '/Users/blago/local/var/www',
+    port    : 8002,
+    middleware : common.concat([
+      express.errorHandler({dumpExceptions:true, showStack:true})
+    ])
+  }
 };

@@ -49,7 +49,7 @@ function init() {
   var faye    = require('faye');
   var utml    = require('utml');
   var program = require('commander'); parseArguments(program);
-  var config  = require('./config')[program.environment];
+  var config  = require(program.config);
   
   // add a cron job to start the server on reboot
   if (program.startup == true) {
@@ -151,9 +151,10 @@ function init() {
 
 function parseArguments(program) {
   program
-    .version('0.0.1')
+    .version('0.1.0')
     .usage('[options]')
-    .option('-e, --environment <name>', 'string', String, process.env.NODE_ENV)
+    .option('-e, --environment <name>', 'string', String)
+    .option('-c, --config <path>', 'string', String)
     .option('-s, --startup [flag]', 'true|false', true)
     .parse(process.argv);
 
@@ -161,6 +162,18 @@ function parseArguments(program) {
     console.error('No environment specified.'.red)
     process.exit(1);
   }
+
+  if (!program.config) {
+    console.error('No config file specified.'.red)
+    process.exit(1);
+  }
+  var configFile = path.resolve(program.config);
+  if (fs.existsSync(configFile) == false) {
+    console.log('Config file doesn\'t exist: '.red, program.config);
+    process.exit(1);
+  }
+  program.config = configFile;
+
   if (program.startup == 'true') {
     program.startup = true;
   }
