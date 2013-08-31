@@ -2,6 +2,7 @@
 
 var fs      = require('fs')
 var path    = require('path');
+var colors  = require('colors');
 var _       = require('underscore');
 var inflate = require('./lib/inflate');
 var apps    = {};
