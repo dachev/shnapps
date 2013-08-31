@@ -1,6 +1,6 @@
 {
   "name":"shnapps",
-  "version":"0.1.1",
+  "version":"0.1.2",
   "dependencies"   : {
     "express"    : "= 3.2.4",
     "utml"       : "git://github.com/dachev/utml.git#master",
