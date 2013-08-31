@@ -52,7 +52,7 @@ function init() {
   var config  = require('./config')[program.environment];
   
   // add a cron job to start the server on reboot
-  if (program.cron == true) {
+  if (program.startup == true) {
     require('crontab').load(function cronLoaded(err, tab) {
       if (err) {
         console.error(err.message.red);
@@ -74,7 +74,7 @@ function init() {
       tab.save();
     });
   }
-  
+
   var rest = express();
   rest.set('env', program.environment);
   rest.set('port', config.web.port);
@@ -153,19 +153,23 @@ function parseArguments(program) {
   program
     .version('0.0.1')
     .usage('[options]')
-    .option('-e, --environment <name>', 'Environment', String, process.env.NODE_ENV)
-    .option('-c, --cron [flag]', 'true|false', true)
+    .option('-e, --environment <name>', 'string', String, process.env.NODE_ENV)
+    .option('-s, --startup [flag]', 'true|false', true)
     .parse(process.argv);
 
   if (!program.environment) {
     console.error('No environment specified.'.red)
     process.exit(1);
   }
-  if (program.cron == 'true') {
-    program.cron = true;
+  if (program.startup == 'true') {
+    program.startup = true;
   }
-  if (program.cron == 'false') {
-    program.cron = false;
+  if (program.startup == 'false') {
+    program.startup = false;
+  }
+  if (program.startup !== true && program.startup !== false) {
+    console.error('Startup argument must be true or false.'.red)
+    process.exit(1);
   }
 }
 
