@@ -52,27 +52,29 @@ function init() {
   var config  = require('./config')[program.environment];
   
   // add a cron job to start the server on reboot
-  require('crontab').load(function cronLoaded(err, tab) {
-    if (err) {
-      console.error(err.message.red);
-      process.exit(1);
-    }
+  if (program.cron == true) {
+    require('crontab').load(function cronLoaded(err, tab) {
+      if (err) {
+        console.error(err.message.red);
+        process.exit(1);
+      }
 
-    var uuid         = '74d967a0-120b-11e0-ac64-0800200c9a66';
-    var nodePath     = process.execPath.split('/').slice(0, -1).join('/');
-    var exptCommand  = 'export PATH=' + nodePath + ':$PATH';
-    var options      = ' -e ' + program.environment;
-    var wwwCommand   = __filename + options;
-    var forevCommand = path.join(__dirname, 'node_modules', 'forever', 'bin', 'forever');
-    var sysCommand   = exptCommand + ' && ' + forevCommand + ' start ' + wwwCommand;
+      var uuid         = '74d967a0-120b-11e0-ac64-0800200c9a66';
+      var nodePath     = process.execPath.split('/').slice(0, -1).join('/');
+      var exptCommand  = 'export PATH=' + nodePath + ':$PATH';
+      var options      = ' -e ' + program.environment;
+      var wwwCommand   = __filename + options;
+      var forevCommand = path.join(__dirname, 'node_modules', 'forever', 'bin', 'forever');
+      var sysCommand   = exptCommand + ' && ' + forevCommand + ' start ' + wwwCommand;
 
-    tab.remove(tab.findComment(uuid));
+      tab.remove(tab.findComment(uuid));
 
-    var item = tab.create(sysCommand, uuid);
-    item.everyReboot();
-    tab.save();
-  });
-
+      var item = tab.create(sysCommand, uuid);
+      item.everyReboot();
+      tab.save();
+    });
+  }
+  
   var rest = express();
   rest.set('env', program.environment);
   rest.set('port', config.web.port);
@@ -152,11 +154,18 @@ function parseArguments(program) {
     .version('0.0.1')
     .usage('[options]')
     .option('-e, --environment <name>', 'Environment', String, process.env.NODE_ENV)
+    .option('-c, --cron [flag]', 'true|false', true)
     .parse(process.argv);
 
   if (!program.environment) {
     console.error('No environment specified.'.red)
     process.exit(1);
+  }
+  if (program.cron == 'true') {
+    program.cron = true;
+  }
+  if (program.cron == 'false') {
+    program.cron = false;
   }
 }
 
