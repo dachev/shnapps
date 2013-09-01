@@ -3,16 +3,17 @@
 var fs      = require('fs')
 var path    = require('path');
 var colors  = require('colors');
+var util    = require('util');
 var _       = require('underscore');
 var inflate = require('./lib/inflate');
 var apps    = {};
 
-function AppLoader(rest, pubsub, docroot) {
-  var dirs = fs.readdirSync(docroot);
+function AppLoader(rest, pubsub, approot) {
+  var dirs = fs.readdirSync(approot);
   
   // load app.js files
   _.each(dirs, function(val, key) {
-    var appPath = path.join(docroot, val);
+    var appPath = path.join(approot, val);
     var appStat = fs.statSync(appPath);
     
     if (appStat.isDirectory() == false) {
@@ -62,8 +63,8 @@ function init() {
       var uuid         = '74d967a0-120b-11e0-ac64-0800200c9a66';
       var nodePath     = process.execPath.split('/').slice(0, -1).join('/');
       var exptCommand  = 'export PATH=' + nodePath + ':$PATH';
-      var options      = ' -e ' + program.environment + ' -c ' + program.config;
-      var wwwCommand   = __filename + options;
+      var options      = util.format('-a %s -c %s -e %s', program.approot, program.config, program.environment);
+      var wwwCommand   = util.format('%s %s', __filename, options);
       var forevCommand = path.join(__dirname, 'node_modules', 'forever', 'bin', 'forever');
       var sysCommand   = exptCommand + ' && ' + forevCommand + ' start ' + wwwCommand;
 
@@ -107,7 +108,7 @@ function init() {
     timeout : 45
   });
   
-  var loader = new AppLoader(rest, pubsub, config.web.docroot);
+  var loader = new AppLoader(rest, pubsub, program.approot);
   loader.on('done', function() {
     rest.get('/', function(req, res, next) {
       res.render('index', {
@@ -153,26 +154,38 @@ function parseArguments(program) {
   program
     .version('0.1.0')
     .usage('[options]')
-    .option('-e, --environment <name>', 'string', String)
+    .option('-a, --approot <path>', 'string', String)
     .option('-c, --config <path>', 'string', String)
+    .option('-e, --environment <name>', 'string', String)
     .option('-s, --startup [flag]', 'true|false', true)
     .parse(process.argv);
 
-  if (!program.environment) {
-    console.error('No environment specified.'.red)
+  if (!program.approot) {
+    console.error('No approot directory specified.'.red)
     process.exit(1);
   }
+  var approotPath = path.resolve(program.approot);
+  if (fs.existsSync(approotPath) == false) {
+    console.log('Approot directory doesn\'t exist: '.red, program.approot);
+    process.exit(1);
+  }
+  program.approot = approotPath;
 
   if (!program.config) {
     console.error('No config file specified.'.red)
     process.exit(1);
   }
-  var configFile = path.resolve(program.config);
-  if (fs.existsSync(configFile) == false) {
+  var configPath = path.resolve(program.config);
+  if (fs.existsSync(configPath) == false) {
     console.log('Config file doesn\'t exist: '.red, program.config);
     process.exit(1);
   }
-  program.config = configFile;
+  program.config = configPath;
+
+  if (!program.environment) {
+    console.error('No environment specified.'.red)
+    process.exit(1);
+  }
 
   if (program.startup == 'true') {
     program.startup = true;

@@ -14,7 +14,6 @@ var common  = [
 
 module.exports = {
   web : {
-    docroot : '/Users/blago/local/var/www',
     port    : 8002,
     middleware : common.concat([
       express.errorHandler({dumpExceptions:true, showStack:true})
