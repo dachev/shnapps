@@ -1,6 +1,9 @@
 {
   "name":"shnapps",
   "version":"0.1.3",
+  "bin":{
+    "shnapps":"./shnapps.js"
+  },
   "dependencies"   : {
     "express"    : "= 3.2.4",
     "utml"       : "git://github.com/dachev/utml.git#master",
