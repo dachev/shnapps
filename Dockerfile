@@ -11,4 +11,4 @@ COPY package.json /usr/src/app/
 RUN npm install
 COPY . /usr/src/app
 
-CMD [ "node", "shnapps.js", "-a", "/var/lib/www", "-c", "config.js", "-e", "production", "-s", "false" ]
+CMD [ "sh", "-c", "node shnapps.js -a /var/lib/www -c config.js -e $SHNAPPS_ENV -s false" ]
