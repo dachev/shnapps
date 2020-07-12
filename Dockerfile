@@ -5,10 +5,15 @@ RUN mkdir -p /var/lib/www
 
 WORKDIR /usr/src/app
 
-ARG NODE_ENV
-ENV NODE_ENV $NODE_ENV
-COPY package.json /usr/src/app/
+# Install app dependencies
+# A wildcard is used to ensure both package.json AND package-lock.json are copied
+# where available (npm@5+)
+COPY package*.json ./
+
+# Install deps
 RUN npm install
-COPY . /usr/src/app
+
+# Copy app source
+COPY . .
 
 CMD [ "sh", "-c", "node shnapps.js -a /var/lib/www -c config.js -e $SHNAPPS_ENV -s false" ]
